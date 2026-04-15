@@ -1,22 +1,4 @@
-// MathJax Configuration
-window.MathJax = {
-    tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\[', '\\]']],
-        processEscapes: true
-    },
-    svg: {
-        fontCache: 'global'
-    },
-    startup: {
-        ready: () => {
-            MathJax.startup.defaultReady();
-            window.mathjaxReady = true;
-            if (typeof updatePreview === 'function') updatePreview();
-        }
-    }
-};
-
+// KaTeX Settings & Core Logic
 const latexInput = document.getElementById('latex-input');
 const output = document.getElementById('output');
 const clearBtn = document.getElementById('clear-btn');
@@ -36,6 +18,7 @@ const presets = [
 
 // Initialize Presets
 function initPresets() {
+    presetGrid.innerHTML = '';
     presets.forEach(p => {
         const div = document.createElement('div');
         div.className = 'preset-item';
@@ -48,96 +31,83 @@ function initPresets() {
     });
 }
 
-// Update Preview
+// Update Preview using KaTeX
 function updatePreview() {
     const val = latexInput.value.trim();
     if (!val) {
-        output.innerHTML = '$$ \\text{수식을 입력해 주세요} $$';
-    } else {
-        output.innerHTML = '$$ ' + val + ' $$';
+        output.innerHTML = '<span style="color: var(--text-secondary)">수식을 입력해 주세요</span>';
+        return;
     }
-    
-    // Trigger MathJax re-render
-    if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise([output]).catch((err) => console.log(err.message));
+
+    try {
+        katex.render(val, output, {
+            throwOnError: false,
+            displayMode: true,
+            trust: true,
+            strict: false
+        });
+    } catch (err) {
+        console.error('KaTeX Error:', err);
+        output.innerHTML = `<span style="color: var(--danger-color)">에러: ${err.message}</span>`;
     }
 }
 
-// Copy to Clipboard (PNG)
+// Copy to Clipboard (PNG) using html2canvas
 async function copyToClipboard() {
     try {
-        const container = output.querySelector('mjx-container');
-        if (!container) return;
+        const katexElement = output.querySelector('.katex-display');
+        if (!katexElement) return;
 
-        const svg = container.querySelector('svg');
-        if (!svg) return;
+        // Use html2canvas to capture the rendered math
+        const canvas = await html2canvas(katexElement, {
+            backgroundColor: null, // Transparent background
+            scale: 4, // High Resolution for PPT
+            logging: false,
+            useCORS: true
+        });
 
-        // Clone SVG to modify it for canvas
-        const clonedSvg = svg.cloneNode(true);
-        const width = svg.viewBox.baseVal.width || svg.width.baseVal.value;
-        const height = svg.viewBox.baseVal.height || svg.height.baseVal.value;
-        
-        // Scale factor for high-DPI
-        const scale = 4; 
-        const canvas = document.createElement('canvas');
-        canvas.width = width * scale;
-        canvas.height = height * scale;
-        const ctx = canvas.getContext('2d');
-
-        // Convert SVG to data URL
-        const svgData = new XMLSerializer().serializeToString(clonedSvg);
-        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-        const url = URL.createObjectURL(svgBlob);
-
-        const img = new Image();
-        img.onload = async () => {
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            URL.revokeObjectURL(url);
-            
-            canvas.toBlob(async (blob) => {
-                try {
-                    const data = [new ClipboardItem({ 'image/png': blob })];
-                    await navigator.clipboard.write(data);
-                    
-                    const originalText = copyBtn.innerHTML;
-                    copyBtn.innerHTML = '복사 완료!';
-                    copyBtn.style.background = 'var(--success-color)';
-                    setTimeout(() => {
-                        copyBtn.innerHTML = originalText;
-                        copyBtn.style.background = 'var(--accent-gradient)';
-                    }, 2000);
-                } catch (err) {
-                    console.error('Clipboard write failed:', err);
-                    alert('클립보드 복사에 실패했습니다. 브라우저 설정을 확인해주세요.');
-                }
-            }, 'image/png');
-        };
-        img.src = url;
+        canvas.toBlob(async (blob) => {
+            try {
+                const data = [new ClipboardItem({ 'image/png': blob })];
+                await navigator.clipboard.write(data);
+                
+                // Success Feedback
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '복사 완료!';
+                copyBtn.style.background = 'var(--success-color)';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = 'var(--accent-gradient)';
+                }, 2000);
+            } catch (err) {
+                console.error('Clipboard write failed:', err);
+                alert('클립보드 복사에 실패했습니다. 브라우저 보안 설정을 확인해주세요.');
+            }
+        }, 'image/png');
 
     } catch (err) {
         console.error('Error in copyToClipboard:', err);
     }
 }
 
-// Download SVG
-function downloadSVG() {
-    const container = output.querySelector('mjx-container');
-    if (!container) return;
+// Download High-Res PNG (Since KaTeX is HTML-based, PNG is more reliable than SVG here)
+function downloadImage() {
+    const katexElement = output.querySelector('.katex-display');
+    if (!katexElement) return;
 
-    const svg = container.querySelector('svg');
-    if (!svg) return;
-
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `eq-${Date.now()}.svg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    html2canvas(katexElement, {
+        backgroundColor: null,
+        scale: 5,
+        logging: false
+    }).then(canvas => {
+        const url = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `math-eq-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
 }
 
 // Event Listeners
@@ -147,8 +117,12 @@ clearBtn.addEventListener('click', () => {
     updatePreview();
 });
 copyBtn.addEventListener('click', copyToClipboard);
-downloadSvgBtn.addEventListener('click', downloadSVG);
+downloadSvgBtn.addEventListener('click', downloadImage); 
+// Note: Changed button function to Download PNG as it's more reliable with KaTeX HTML output
 
 // Init
 initPresets();
-updatePreview();
+// Ensure KaTeX is loaded before first render
+window.onload = () => {
+    updatePreview();
+};

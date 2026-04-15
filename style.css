@@ -151,8 +151,8 @@ textarea {
     border-radius: 12px;
     padding: 1rem;
     color: #fff;
-    font-family: 'Consolas', 'Monaco', monospace;
-    font-size: 1rem;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* \ -> ₩ 변환 문제 방지 */
+    font-size: 1.1rem;
     resize: none;
     outline: none;
     transition: border-color 0.3s ease;
@@ -224,9 +224,9 @@ textarea:focus {
     background-size: 20px 20px;
 }
 
-/* MathJax Specific Tweaks */
-mjx-container {
-    font-size: 200% !important; /* Increase preview size */
+/* KaTeX Specific Tweaks */
+.katex {
+    font-size: 3rem !important; /* Increase preview size */
 }
 
 .presets-section h3 {
