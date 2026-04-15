@@ -301,10 +301,12 @@ textarea:focus {
     border-color: var(--accent-color);
 }
 
-.preset-item div {
+.preset-item code {
     font-size: 0.9rem;
     color: var(--text-secondary);
     margin-bottom: 0.5rem;
+    display: block;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* \ -> ₩ 변환 문제 방지 */
 }
 
 footer {
