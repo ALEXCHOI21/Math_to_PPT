@@ -229,15 +229,62 @@ textarea:focus {
     font-size: 3rem !important; /* Increase preview size */
 }
 
-.presets-section h3 {
-    margin-bottom: 1.5rem;
+.search-container {
+    margin-bottom: 2rem;
+}
+
+.search-container h3 {
     font-family: var(--font-heading);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box svg {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+}
+
+.search-box input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
 }
 
 .preset-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
+    max-height: 600px; /* Enable scrolling for long list */
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.preset-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.preset-grid::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
 }
 
 .preset-item {
