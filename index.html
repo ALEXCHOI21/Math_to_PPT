@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antigravity Math - 초격차 PPT 수식 제작 도구</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- MathJax for high-quality LaTeX rendering (SVG version) -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <span class="brand">Antigravity</span>
+                <span class="product">Math Engine</span>
+            </div>
+            <p class="subtitle">PPT 최적화 고해상도 수식 제작 플랫폼</p>
+        </header>
+
+        <main>
+            <section class="editor-section">
+                <div class="card editor-card">
+                    <div class="card-header">
+                        <h3>LaTeX 입력</h3>
+                        <span class="badge">Live</span>
+                    </div>
+                    <textarea id="latex-input" placeholder="여기에 LaTeX 수식을 입력하세요. 예: \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}"></textarea>
+                    <div class="input-actions">
+                        <button id="clear-btn" class="secondary-btn">지우기</button>
+                    </div>
+                </div>
+
+                <div class="card preview-card">
+                    <div class="card-header">
+                        <h3>실시간 프리뷰</h3>
+                        <div class="preview-options">
+                            <label><input type="checkbox" id="transparent-bg" checked> 투명 배경</label>
+                        </div>
+                    </div>
+                    <div id="math-preview" class="preview-area">
+                        <div id="output">$$ \text{수식을 입력해 주세요} $$</div>
+                    </div>
+                    <div class="output-actions">
+                        <button id="copy-btn" class="primary-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            클립보드 복사 (PNG)
+                        </button>
+                        <button id="download-svg-btn" class="primary-btn outline">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            SVG 다운로드
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="presets-section">
+                <h3>수식 템플릿</h3>
+                <div class="preset-grid" id="preset-grid">
+                    <!-- Presets will be loaded here -->
+                </div>
+            </aside>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 ChoiGPT Corp. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <!-- html2canvas for PNG capture if needed, though we will try SVG to Canvas first -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
