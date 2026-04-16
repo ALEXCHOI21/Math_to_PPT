@@ -17,9 +17,15 @@
 <body>
     <div class="app-container">
         <header>
-            <div class="logo">
-                <span class="brand">Antigravity</span>
-                <span class="product">Math Engine</span>
+            <div class="header-main">
+                <div class="logo">
+                    <span class="brand">Antigravity</span>
+                    <span class="product">Math Engine</span>
+                </div>
+                <button id="help-btn" class="help-trigger">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    도움말
+                </button>
             </div>
             <p class="subtitle">PPT 최적화 고해상도 수식 제작 플랫폼</p>
         </header>
@@ -74,9 +80,41 @@
             </aside>
         </main>
 
-        <footer>
-            <p>&copy; 2026 ChoiGPT Corp. All Rights Reserved.</p>
-        </footer>
+    <!-- Manual Modal -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>사용자 가이드 & LaTeX 퀵 레퍼런스</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <section>
+                    <h4>1. 기본 사용법</h4>
+                    <ul>
+                        <li><strong>수식 입력:</strong> LaTeX 문법을 사용하여 수식을 입력하면 실시간으로 프리뷰가 생성됩니다.</li>
+                        <li><strong>복사하기:</strong> '클립보드 복사' 버튼을 눌러 PPT에 바로 붙여넣으세요. 투명 배경이 유지됩니다.</li>
+                        <li><strong>검색하기:</strong> 우측 라이브러리 상단의 검색창에서 원하는 공식의 이름을 검색하세요.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h4>2. 주요 LaTeX 문법 (퀵 시트)</h4>
+                    <table class="manual-table">
+                        <thead><tr><th>기능</th><th>문법</th><th>예시</th></tr></thead>
+                        <tbody>
+                            <tr><td>분수</td><td><code>\frac{a}{b}</code></td><td>\(\frac{a}{b}\)</td></tr>
+                            <tr><td>루트</td><td><code>\sqrt{x}</code></td><td>\(\sqrt{x}\)</td></tr>
+                            <tr><td>첨자</td><td><code>x^{n}, a_{i}</code></td><td>\(x^n, a_i\)</td></tr>
+                            <tr><td>시그마</td><td><code>\sum_{i=1}^{n}</code></td><td>\(\sum_{i=1}^{n}\)</td></tr>
+                            <tr><td>그리스 문자</td><td><code>\pi, \alpha, \theta</code></td><td>\(\pi, \alpha, \theta\)</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section>
+                    <h4>3. 고급 팁</h4>
+                    <p>중괄호 <code>{ }</code>를 사용하여 영역을 명확히 구분하세요. 수식이 빨간색으로 나오면 문법 오류입니다.</p>
+                </section>
+            </div>
+        </div>
     </div>
 
     <!-- html2canvas for PNG capture if needed, though we will try SVG to Canvas first -->

@@ -6,6 +6,9 @@ const copyBtn = document.getElementById('copy-btn');
 const downloadSvgBtn = document.getElementById('download-svg-btn');
 const presetGrid = document.getElementById('preset-grid');
 const searchInput = document.getElementById('preset-search');
+const helpBtn = document.getElementById('help-btn');
+const helpModal = document.getElementById('help-modal');
+const closeModal = document.querySelector('.close-modal');
 
 // Comprehensive Presets Database (50+ Formulas)
 const presets = [
@@ -182,6 +185,34 @@ clearBtn.addEventListener('click', () => {
 
 copyBtn.addEventListener('click', copyToClipboard);
 downloadSvgBtn.addEventListener('click', downloadImage); 
+
+// Modal Control Logic
+function toggleModal() {
+    const isVisible = helpModal.style.display === 'block';
+    helpModal.style.display = isVisible ? 'none' : 'block';
+    
+    if (!isVisible) {
+        // Render math in modal when opened
+        if (window.renderMathInElement) {
+            renderMathInElement(helpModal.querySelector('.modal-body'), {
+                delimiters: [
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+        }
+    }
+}
+
+helpBtn.addEventListener('click', toggleModal);
+closeModal.addEventListener('click', toggleModal);
+window.addEventListener('click', (e) => {
+    if (e.target === helpModal) toggleModal();
+});
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && helpModal.style.display === 'block') toggleModal();
+});
 
 // Init
 initPresets();
