@@ -15,7 +15,8 @@ const presets = [
     // --- CSAT Killer Problems (수능 킬러 문항) ---
     { name: "[2026 수능] 미적분 30번 (가)", latex: "4(f^{-1}(x))^2 = x^2(x^2 - 5)^2", tags: "수능 killer 30번 Calculus" },
     { name: "[2026 수능] 미적분 30번 (나)", latex: "|f^{-1}(x)| = e^{|x|-1} + 1", tags: "수능 killer 30번 Calculus" },
-    { name: "[2026 수능] 미적분 30번 최종식", latex: "g(a) \\times (\\lim_{m \\to a^+} g(m)) + g(b) \\times \\left(\\frac{b}{\\ln b}\right)^2", tags: "수능 killer 30번 Calculus" },
+    { name: "[2026 수능] 미적분 30번 최종식", latex: "g(a) \\times \\left( \\lim_{m \\to a^+} g(m) \\right) + g(b) \\times \\left( \\frac{\\ln b}{b} \\right)^2", tags: "수능 killer 30번 Calculus" },
+    { name: "로그 함수의 극한", latex: "\\lim_{x \\to \\infty} \\frac{\\ln x}{x} = 0", tags: "수능 killer calculus limit" },
     { name: "구간 정의 함수 (Cases)", latex: "f(x) = \\begin{cases} x^2 + 1 & (x \\ge 1) \\\\ e^{x-1} + 1 & (x < 1) \\end{cases}", tags: "수능 킬러 조건부 calculus" },
 
     // --- Algebra & Basic Math ---
