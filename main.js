@@ -12,6 +12,12 @@ const closeModal = document.querySelector('.close-modal');
 
 // Comprehensive Presets Database (50+ Formulas)
 const presets = [
+    // --- CSAT Killer Problems (수능 킬러 문항) ---
+    { name: "[2026 수능] 미적분 30번 (가)", latex: "4(f^{-1}(x))^2 = x^2(x^2 - 5)^2", tags: "수능 killer 30번 Calculus" },
+    { name: "[2026 수능] 미적분 30번 (나)", latex: "|f^{-1}(x)| = e^{|x|-1} + 1", tags: "수능 killer 30번 Calculus" },
+    { name: "[2026 수능] 미적분 30번 최종식", latex: "g(a) \\times (\\lim_{m \\to a^+} g(m)) + g(b) \\times \\left(\\frac{b}{\\ln b}\right)^2", tags: "수능 killer 30번 Calculus" },
+    { name: "구간 정의 함수 (Cases)", latex: "f(x) = \\begin{cases} x^2 + 1 & (x \\ge 1) \\\\ e^{x-1} + 1 & (x < 1) \\end{cases}", tags: "수능 킬러 조건부 calculus" },
+
     // --- Algebra & Basic Math ---
     { name: "근의 공식 (Quadratic Formula)", latex: "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}", tags: "이차방정식 algebra" },
     { name: "이항 정리 (Binomial Theorem)", latex: "(a+b)^n = \\sum_{k=0}^{n} \\binom{n}{k} a^{n-k} b^k", tags: "algebra" },
