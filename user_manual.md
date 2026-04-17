@@ -1,4 +1,4 @@
-# [사용자 매뉴얼] Antigravity Math Engine 마스터 가이드 (v1.4.1)
+# [사용자 매뉴얼] Antigravity Math Engine 마스터 가이드 (v1.4.2)
 
 본 지침서는 Antigravity Math Engine을 통해 전문가 수준의 수학 수식을 PPT에 삽입하고자 하는 사용자를 위해 작성되었습니다.
 
