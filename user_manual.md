@@ -19,6 +19,8 @@
 | :--- | :--- | :--- |
 | **자동 크기 괄호** | `\left( \frac{a}{b} \right)` | $\left( \frac{a}{b} \right)$ (괄호 크기 자동 조절) |
 | **조건부 함수** | `\begin{cases} x & x \ge 0 \\ -x & x < 0 \end{cases}` | $\begin{cases} x & x \ge 0 \\ -x & x < 0 \end{cases}$ |
+| **절댓값** | `\left\| x \right\|` | $\left| x \right|$ |
+| **부등호** | `\ge, \le` | $\ge, \le$ |
 | **분수** | `\frac{분자}{분모}` | $\frac{a}{b}$ |
 | **루트(근호)** | `\sqrt{x}` | $\sqrt{x}$ |
 | **그리스 문자** | `\pi, \alpha, \theta` | $\pi, \alpha, \theta$ |

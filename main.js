@@ -69,6 +69,10 @@ const presets = [
     { name: "구의 부피 (Volume of Sphere)", latex: "V = \\frac{4}{3} \\pi r^3", tags: "geometry" },
     { name: "오일러 다면체 정리 (Polyhedron)", latex: "V - E + F = 2", tags: "geometry topo" },
     
+    // --- Basic Operators & Symbols (기본 기호) ---
+    { name: "절댓값 (Absolute Value)", latex: "\\left| x \\right|", tags: "절댓값 absolute math basic" },
+    { name: "이상/이하 (Inequality)", latex: "a \\ge b, c \\le d", tags: "부등호 이상 이하 inequality math" },
+
     // --- Advanced Math ---
     { name: "리만 제타 함수 (Riemann Zeta)", latex: "\\zeta(s) = \\sum_{n=1}^{\\infty} \\frac{1}{n^s}", tags: "math" },
     { name: "나비에-스토크스 (Navier-Stokes)", latex: "\\rho(\\frac{\\partial \\vec{v}}{\\partial t} + \\vec{v} \\cdot \\nabla \\vec{v}) = -\\nabla p + \\mu \\nabla^2 \\vec{v} + \\vec{f}", tags: "math physics" },
