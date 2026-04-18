@@ -10,43 +10,61 @@ const helpBtn = document.getElementById('help-btn');
 const helpModal = document.getElementById('help-modal');
 const closeModal = document.querySelector('.close-modal');
 
-// Comprehensive Presets Database (50+ Formulas)
-// Comprehensive Presets Database (70+ Formulas)
+// Comprehensive Presets Database (80+ Formulas) - v1.5.3 Definite
 const presets = [
-    // --- CSAT Specialized (2026 수능 특화) ---
-    { category: "CSAT", name: "[2026 수능] 사인법칙 활용", latex: "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = 2R", tags: "수능 필수 사인법칙" },
-    { category: "CSAT", name: "[2026 수능] 코사인법칙 변형", latex: "\\cos A = \\frac{b^2 + c^2 - a^2}{2bc}", tags: "수능 필수 코사인법칙" },
-    { category: "CSAT", name: "[2026 수능] 등차수열의 합", latex: "S_n = \\frac{n\\{2a + (n-1)d\}}{2}", tags: "수능 필수 수열" },
-    { category: "CSAT", name: "[2026 수능] 등비수열의 극한", latex: "\\lim_{n \\to \\infty} r^n = \\begin{cases} 0 & (|r|<1) \\\\ 1 & (r=1) \\end{cases}", tags: "수능 공통 극한" },
-    { category: "CSAT", name: "[2026 수능] 삼각함수의 합성", latex: "a\\sin \\theta + b\\cos \\theta = \\sqrt{a^2+b^2}\\sin(\\theta+\\alpha)", tags: "수능 심화 미적분" },
-    { category: "CSAT", name: "[2026 수능] 미적분 30번 최종식", latex: "g(a) \\times \\left( \\lim_{m \\to a^+} g(m) \\right) + g(b) \\times \\left( \\frac{\\ln b}{b} \\right)^2", tags: "수능 킬러" },
+    // --- CSAT Specialized (2026 수능 대비 전문) ---
+    { category: "CSAT", name: "[수능] 사인법칙 활용", latex: "\\\\frac{a}{\\\\sin A} = \\\\frac{b}{\\\\sin B} = 2R", tags: "수능 필수 사인법칙" },
+    { category: "CSAT", name: "[수능] 코사인법칙 변형", latex: "\\\\cos A = \\\\frac{b^2 + c^2 - a^2}{2bc}", tags: "수능 필수 코사인법칙" },
+    { category: "CSAT", name: "[수능] 등차수열의 합 (General)", latex: "S_n = \\\\frac{n\\{2a + (n-1)d\\}}{2}", tags: "수능 필수 수열" },
+    { category: "CSAT", name: "[수능] 등비수열의 합", latex: "S_n = \\\\frac{a(1-r^n)}{1-r} \\\\quad (r \\\\neq 1)", tags: "수능 필수 수열" },
+    { category: "CSAT", name: "[수능] 등비수열의 극한", latex: "\\\\lim_{n \\\\to \\\\infty} r^n = \\\\begin{cases} 0 & (|r|<1) \\\\\\\\ 1 & (r=1) \\\\end{cases}", tags: "수능 공통 극한" },
+    { category: "CSAT", name: "[수능] 삼각함수의 합성", latex: "a\\\\sin \\\\theta + b\\\\cos \\\\theta = \\\\sqrt{a^2+b^2}\\\\sin(\\\\theta+\\\\alpha)", tags: "수능 심화 미적분" },
+    { category: "CSAT", name: "[수능] 2026 미적분 30번 킬러", latex: "g(a) \\\\cdot \\\\left( \\\\lim_{m \\\\to a^+} g(m) \\\\\\right) + g(b) \\\\cdot \\\\left( \\\\frac{\\\\ln b}{b} \\\\\\right)^2", tags: "수능 킬러" },
+    { category: "CSAT", name: "[수능] 합성함수의 미분", latex: "(f \\\\circ g)'(x) = f'(g(x))g'(x)", tags: "수능 미적분" },
 
-    // --- Math I/II (공통 과목) ---
-    { category: "Math I/II", name: "지수 법칙 (Exponent Laws)", latex: "a^m \\cdot a^n = a^{m+n}, \\quad (a^m)^n = a^{mn}", tags: "수학I" },
-    { category: "Math I/II", name: "로그 정의 (Log Definition)", latex: "y = \\log_a x \\iff x = a^y", tags: "수학I" },
-    { category: "Math I/II", name: "함수의 극한 (Limit Definition)", latex: "\\lim_{x \\to a} f(x) = L", tags: "수학II" },
-    { category: "Math I/II", name: "도함수 (Derivative)", latex: "f'(x) = \\lim_{\\Delta x \\to 0} \\frac{f(x+\\Delta x) - f(x)}{\\Delta x}", tags: "수학II" },
-    { category: "Math I/II", name: "정적분 (Definite Integral)", latex: "\\int_a^b f(x) dx = [F(x)]_a^b = F(b) - F(a)", tags: "수학II" },
-    { category: "Math I/II", name: "근의 공식", latex: "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}", tags: "기초" },
+    // --- Math I/II (공통 과목 핵심) ---
+    { category: "Math I/II", name: "지수 법칙", latex: "a^m \\\\cdot a^n = a^{m+n}, \\\\quad (a^m)^n = a^{mn}", tags: "수학I algebra" },
+    { category: "Math I/II", name: "로그 정의", latex: "y = \\\\log_a x \\\\iff x = a^y", tags: "수학I log" },
+    { category: "Math I/II", name: "로그 합병/분리", latex: "\\\\log_a (xy) = \\\\log_a x + \\\\log_a y", tags: "수학I log" },
+    { category: "Math I/II", name: "함수의 극한", latex: "\\\\lim_{x \\\\to a} f(x) = L", tags: "수학II limit" },
+    { category: "Math I/II", name: "미분계수의 정의", latex: "f'(a) = \\\\lim_{h \\\\to 0} \\\\frac{f(a+h) - f(a)}{h}", tags: "수학II calculus" },
+    { category: "Math I/II", name: "정적분의 기본 정리", latex: "\\\\int_a^b f(x) dx = F(b) - F(a)", tags: "수학II integral" },
+    { category: "Math I/II", name: "근의 공식", latex: "x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}", tags: "algebra 기초" },
+    { category: "Math I/II", name: "피타고라스 정리", latex: "a^2 + b^2 = c^2", tags: "geometry" },
+    { category: "Math I/II", name: "이항 정리", latex: "(a+b)^n = \\\\sum_{k=0}^n \\\\binom{n}{k} a^{n-k} b^k", tags: "algebra" },
 
     // --- Calculus (미적분 심화) ---
-    { category: "Calculus", name: "몫의 미분법 (Quotient Rule)", latex: "\\left(\\frac{f}{g}\\right)' = \\frac{f'g - fg'}{g^2}", tags: "미적분" },
-    { category: "Calculus", name: "합성함수 미분 (Chain Rule)", latex: "\\frac{dy}{dx} = \\frac{dy}{du} \\cdot \\frac{du}{dx}", tags: "미적분" },
-    { category: "Calculus", name: "부분 적분 (Integration by Parts)", latex: "\\int u dv = uv - \\int v du", tags: "미적분" },
-    { category: "Calculus", name: "치환 적분 (Substitution)", latex: "\\int f(g(x))g'(x) dx = \\int f(u) du", tags: "미적분" },
-    { category: "Calculus", name: "역함수 미분법", latex: "(f^{-1})'(b) = \\frac{1}{f'(a)} \\quad (f(a)=b)", tags: "미적분" },
+    { category: "Calculus", name: "몫의 미분법", latex: "\\\\left(\\\\frac{f}{g}\\\\right)' = \\\\frac{f'g - fg'}{g^2}", tags: "calculus" },
+    { category: "Calculus", name: "부분 적분 (IBP)", latex: "\\\\int u dv = uv - \\\\int v du", tags: "calculus integral" },
+    { category: "Calculus", name: "치환 적분 (Substitution)", latex: "\\\\int f(g(x))g'(x) dx = \\\\int f(u) du", tags: "calculus integral" },
+    { category: "Calculus", name: "역함수 미분법", latex: "(f^{-1})'(b) = \\\\frac{1}{f'(a)}", tags: "calculus" },
+    { category: "Calculus", name: "테일러 급수", latex: "f(x) = \\\\sum_{n=0}^{\\\\infty} \\\\frac{f^{(n)}(a)}{n!} (x-a)^n", tags: "calculus series" },
+    { category: "Calculus", name: "가우스 적분", latex: "\\\\int_{-\\\\infty}^{\\\\infty} e^{-x^2} dx = \\\\sqrt{\\\\pi}", tags: "calculus integral" },
+    { category: "Calculus", name: "푸리에 변환", latex: "\\\\hat{f}(\\\\xi) = \\\\int_{-\\\\infty}^{\\\\infty} f(x) e^{-2\\\\pi i x \\\\xi} dx", tags: "math physics" },
+    { category: "Calculus", name: "라플라스 변환", latex: "F(s) = \\\\int_0^{\\\\infty} f(t) e^{-st} dt", tags: "math" },
 
-    // --- Prob/Geo (확통 & 기하) ---
+    // --- Prob/Geo (확통 & 기하 전문) ---
     { category: "Prob/Geo", name: "중복조합 (H)", latex: "{}_n H_r = {}_{n+r-1} C_r", tags: "확통" },
-    { category: "Prob/Geo", name: "조건부 확률", latex: "P(A|B) = \\frac{P(A \\cap B)}{P(B)}", tags: "확통" },
-    { category: "Prob/Geo", name: "정규분포 표기", latex: "X \\sim N(\\mu, \\sigma^2)", tags: "확통" },
-    { category: "Prob/Geo", name: "벡터 내적 (Dot Product)", latex: "\\vec{a} \\cdot \\vec{b} = |\\vec{a}||\\vec{b}| \\cos \\theta", tags: "기하" },
-    { category: "Prob/Geo", name: "타원 방정식 (Ellipse)", latex: "\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1", tags: "기하" },
+    { category: "Prob/Geo", name: "조건부 확률 (Bayes)", latex: "P(A|B) = \\\\frac{P(B|A)P(A)}{P(B)}", tags: "확통" },
+    { category: "Prob/Geo", name: "이항 분포", latex: "X \\\\sim B(n, p) \\\\implies P(X=k) = \\\\binom{n}{k} p^k (1-p)^{n-k}", tags: "확통" },
+    { category: "Prob/Geo", name: "정규분포 확률밀도", latex: "f(x) = \\\\frac{1}{\\\\sigma\\\\sqrt{2\\\\pi}} e^{-\\\\frac{1}{2}(\\\\frac{x-\\\\mu}{\\\\sigma})^2}", tags: "확통" },
+    { category: "Prob/Geo", name: "벡터 내적", latex: "\\\\vec{a} \\\\cdot \\\\vec{b} = |\\\\vec{a}||\\vec{b}| \\\\cos \\\\theta", tags: "기하 vector" },
+    { category: "Prob/Geo", name: "타원의 방정식", latex: "\\\\frac{x^2}{a^2} + \\\\frac{y^2}{b^2} = 1", tags: "기하 conic" },
+    { category: "Prob/Geo", name: "쌍곡선 방정식", latex: "\\\\frac{x^2}{a^2} - \\\\frac{y^2}{b^2} = 1", tags: "기하 conic" },
 
-    // --- Basic & Algebra (기존 보존) ---
-    { category: "Math I/II", name: "근의 공식", latex: "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}", tags: "이차방정식" },
-    { category: "Math I/II", name: "피타고라스 정리", latex: "a^2 + b^2 = c^2", tags: "trig" },
-    { category: "Math I/II", name: "절댓값 표시", latex: "\\left| x \\right|", tags: "basic" }
+    // --- Science (전문 과학/공학) ---
+    { category: "Science", name: "슈뢰딩거 방정식", latex: "i\\\\hbar\\\\frac{\\\\partial}{\\\\partial t}\\\\Psi = \\\\hat{H}\\\\Psi", tags: "physics quantum" },
+    { category: "Science", name: "맥스웰 - 가우스", latex: "\\\\nabla \\\\cdot \\\\vec{E} = \\\\frac{\\\\rho}{\\\\epsilon_0}", tags: "physics em" },
+    { category: "Science", name: "맥스웰 - 패러데이", latex: "\\\\nabla \\\\times \\\\vec{E} = -\\\\frac{\\\\partial \\\\vec{B}}{\\\\partial t}", tags: "physics em" },
+    { category: "Science", name: "질량-에너지 등가", latex: "E = mc^2", tags: "physics relativity" },
+    { category: "Science", name: "뉴턴 제2법칙", latex: "F = m \\\\frac{d^2 x}{dt^2}", tags: "physics mechanics" },
+    { category: "Science", name: "나비에-스토크스", latex: "\\\\rho(\\\\frac{\\\\partial \\\\vec{v}}{\\\\partial t} + \\\\vec{v} \\\\cdot \\\\nabla \\\\vec{v}) = -\\\\nabla p + \\\\mu \\\\nabla^2 \\\\vec{v} + \\\\vec{f}", tags: "engineering math" },
+    { category: "Science", name: "리만 제타 함수", latex: "\\\\zeta(s) = \\\\sum_{n=1}^{\\\\infty} \\\\frac{1}{n^s}", tags: "math" },
+    { category: "Science", name: "오일러 항등식", latex: "e^{i\\\\pi} + 1 = 0", tags: "math physics" },
+
+    // --- Basic & Others ---
+    { category: "Math I/II", name: "절댓값 표시", latex: "\\\\left| x \\\\right|", tags: "basic" },
+    { category: "Math I/II", name: "부등호 (이상/이하)", latex: "\\\\ge, \\\\le", tags: "basic" }
 ];
 
 let currentCategory = 'All';
@@ -120,10 +138,9 @@ async function copyToClipboard() {
         const katexElement = output.querySelector('.katex-display');
         if (!katexElement) return;
 
-        // Use html2canvas to capture the rendered math
         const canvas = await html2canvas(katexElement, {
-            backgroundColor: null, // Transparent background
-            scale: 4, // High Resolution for PPT
+            backgroundColor: null,
+            scale: 4,
             logging: false,
             useCORS: true
         });
@@ -133,7 +150,6 @@ async function copyToClipboard() {
                 const data = [new ClipboardItem({ 'image/png': blob })];
                 await navigator.clipboard.write(data);
                 
-                // Success Feedback
                 const originalText = copyBtn.innerHTML;
                 copyBtn.innerHTML = '복사 완료!';
                 copyBtn.style.background = 'var(--success-color)';
@@ -143,7 +159,7 @@ async function copyToClipboard() {
                 }, 2000);
             } catch (err) {
                 console.error('Clipboard write failed:', err);
-                alert('클립보드 복사에 실패했습니다. 브라우저 보안 설정을 확인해주세요.');
+                alert('클립보드 복사에 실패했습니다.');
             }
         }, 'image/png');
 
@@ -152,7 +168,6 @@ async function copyToClipboard() {
     }
 }
 
-// Download High-Res PNG
 function downloadImage() {
     const katexElement = output.querySelector('.katex-display');
     if (!katexElement) return;
@@ -175,22 +190,18 @@ function downloadImage() {
 // Event Listeners
 latexInput.addEventListener('input', updatePreview);
 searchInput.addEventListener('input', (e) => initPresets(e.target.value));
-
 clearBtn.addEventListener('click', () => {
     latexInput.value = '';
     updatePreview();
 });
-
 copyBtn.addEventListener('click', copyToClipboard);
 downloadSvgBtn.addEventListener('click', downloadImage); 
 
-// Modal Control Logic
 function toggleModal() {
     const isVisible = helpModal.style.display === 'block';
     helpModal.style.display = isVisible ? 'none' : 'block';
     
     if (!isVisible) {
-        // Render math in modal when opened
         if (window.renderMathInElement) {
             renderMathInElement(helpModal.querySelector('.modal-body'), {
                 delimiters: [
@@ -215,6 +226,4 @@ window.addEventListener('keydown', (e) => {
 // Init
 setupTabs();
 initPresets();
-window.onload = () => {
-    updatePreview();
-};
+window.onload = updatePreview;

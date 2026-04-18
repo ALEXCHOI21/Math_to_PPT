@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antigravity Math - 초격차 PPT 수식 제작 도구</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Antigravity Math - 초격차 PPT 수식 제작 도구 v1.5.3</title>
+    <link rel="stylesheet" href="style.css?v=1.5.3">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
                 <div class="card editor-card">
                     <div class="card-header">
                         <h3>LaTeX 입력</h3>
-                        <span class="badge">Live</span>
+                        <span class="badge">v1.5.3</span>
                     </div>
                     <textarea id="latex-input" placeholder="여기에 LaTeX 수식을 입력하세요. 예: \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}"></textarea>
                     <div class="input-actions">
@@ -60,7 +60,7 @@
                         </button>
                         <button id="download-svg-btn" class="primary-btn outline">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                            SVG 다운로드
+                            PNG 다운로드
                         </button>
                     </div>
                 </div>
@@ -75,6 +75,7 @@
                         <button class="tab-btn" data-category="Math I/II">공통과목</button>
                         <button class="tab-btn" data-category="Calculus">미적분</button>
                         <button class="tab-btn" data-category="Prob/Geo">확통/기하</button>
+                        <button class="tab-btn" data-category="Science">과학/공학</button>
                     </div>
                     <div class="search-box">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -126,8 +127,8 @@
         </div>
     </div>
 
-    <!-- html2canvas for PNG capture if needed, though we will try SVG to Canvas first -->
+    <!-- html2canvas for PNG capture -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <script src="main.js?v=1.5.0"></script>
+    <script src="main.js?v=1.5.3"></script>
 </body>
 </html>
