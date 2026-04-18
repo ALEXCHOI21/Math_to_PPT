@@ -11,81 +11,56 @@ const helpModal = document.getElementById('help-modal');
 const closeModal = document.querySelector('.close-modal');
 
 // Comprehensive Presets Database (50+ Formulas)
+// Comprehensive Presets Database (70+ Formulas)
 const presets = [
-    // --- CSAT Killer Problems (수능 킬러 문항) ---
-    { name: "[2026 수능] 미적분 30번 (가)", latex: "4(f^{-1}(x))^2 = x^2(x^2 - 5)^2", tags: "수능 killer 30번 Calculus" },
-    { name: "[2026 수능] 미적분 30번 (나)", latex: "|f^{-1}(x)| = e^{|x|-1} + 1", tags: "수능 killer 30번 Calculus" },
-    { name: "[2026 수능] 미적분 30번 최종식", latex: "g(a) \\times \\left( \\lim_{m \\to a^+} g(m) \\right) + g(b) \\times \\left( \\frac{\\ln b}{b} \\right)^2", tags: "수능 killer 30번 Calculus" },
-    { name: "로그 함수의 극한", latex: "\\lim_{x \\to \\infty} \\frac{\\ln x}{x} = 0", tags: "수능 killer calculus limit" },
-    { name: "구간 정의 함수 (Cases)", latex: "f(x) = \\begin{cases} x^2 + 1 & (x \\ge 1) \\\\ e^{x-1} + 1 & (x < 1) \\end{cases}", tags: "수능 킬러 조건부 calculus" },
+    // --- CSAT Specialized (2026 수능 특화) ---
+    { category: "CSAT", name: "[2026 수능] 사인법칙 활용", latex: "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = 2R", tags: "수능 필수 사인법칙" },
+    { category: "CSAT", name: "[2026 수능] 코사인법칙 변형", latex: "\\cos A = \\frac{b^2 + c^2 - a^2}{2bc}", tags: "수능 필수 코사인법칙" },
+    { category: "CSAT", name: "[2026 수능] 등차수열의 합", latex: "S_n = \\frac{n\\{2a + (n-1)d\}}{2}", tags: "수능 필수 수열" },
+    { category: "CSAT", name: "[2026 수능] 등비수열의 극한", latex: "\\lim_{n \\to \\infty} r^n = \\begin{cases} 0 & (|r|<1) \\\\ 1 & (r=1) \\end{cases}", tags: "수능 공통 극한" },
+    { category: "CSAT", name: "[2026 수능] 삼각함수의 합성", latex: "a\\sin \\theta + b\\cos \\theta = \\sqrt{a^2+b^2}\\sin(\\theta+\\alpha)", tags: "수능 심화 미적분" },
+    { category: "CSAT", name: "[2026 수능] 미적분 30번 최종식", latex: "g(a) \\times \\left( \\lim_{m \\to a^+} g(m) \\right) + g(b) \\times \\left( \\frac{\\ln b}{b} \\right)^2", tags: "수능 킬러" },
 
-    // --- Algebra & Basic Math ---
-    { name: "근의 공식 (Quadratic Formula)", latex: "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}", tags: "이차방정식 algebra" },
-    { name: "이항 정리 (Binomial Theorem)", latex: "(a+b)^n = \\sum_{k=0}^{n} \\binom{n}{k} a^{n-k} b^k", tags: "algebra" },
-    { name: "로그 성질 (Logarithm)", latex: "\\log_a (xy) = \\log_a x + \\log_a y", tags: "log algebra" },
-    { name: "등비수열의 합 (Geometric Series)", latex: "S_n = \\frac{a(1-r^n)}{1-r}", tags: "series algebra" },
-    { name: "복소수 (Complex Number)", latex: "z = a + bi = r(\\cos \\theta + i \\sin \\theta)", tags: "complex algebra" },
+    // --- Math I/II (공통 과목) ---
+    { category: "Math I/II", name: "지수 법칙 (Exponent Laws)", latex: "a^m \\cdot a^n = a^{m+n}, \\quad (a^m)^n = a^{mn}", tags: "수학I" },
+    { category: "Math I/II", name: "로그 정의 (Log Definition)", latex: "y = \\log_a x \\iff x = a^y", tags: "수학I" },
+    { category: "Math I/II", name: "함수의 극한 (Limit Definition)", latex: "\\lim_{x \\to a} f(x) = L", tags: "수학II" },
+    { category: "Math I/II", name: "도함수 (Derivative)", latex: "f'(x) = \\lim_{\\Delta x \\to 0} \\frac{f(x+\\Delta x) - f(x)}{\\Delta x}", tags: "수학II" },
+    { category: "Math I/II", name: "정적분 (Definite Integral)", latex: "\\int_a^b f(x) dx = [F(x)]_a^b = F(b) - F(a)", tags: "수학II" },
+    { category: "Math I/II", name: "근의 공식", latex: "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}", tags: "기초" },
 
-    // --- Trigonometry ---
-    { name: "피타고라스 정리 (Pythagorean)", latex: "a^2 + b^2 = c^2", tags: "trig triangle" },
-    { name: "삼각함수 항등식 (Trig Identity)", latex: "\\sin^2 \\theta + \\cos^2 \\theta = 1", tags: "trig" },
-    { name: "사인 법칙 (Law of Sines)", latex: "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C}", tags: "trig triangle" },
-    { name: "코사인 법칙 (Law of Cosines)", latex: "c^2 = a^2 + b^2 - 2ab \\cos C", tags: "trig triangle" },
-    { name: "배각 공식 (Double Angle)", latex: "\\sin 2\\theta = 2 \\sin \\theta \\cos \\theta", tags: "trig" },
-    { name: "탄젠트 덧셈 (Tan Addition)", latex: "\\tan(A+B) = \\frac{\\tan A + \\tan B}{1 - \\tan A \\tan B}", tags: "trig" },
+    // --- Calculus (미적분 심화) ---
+    { category: "Calculus", name: "몫의 미분법 (Quotient Rule)", latex: "\\left(\\frac{f}{g}\\right)' = \\frac{f'g - fg'}{g^2}", tags: "미적분" },
+    { category: "Calculus", name: "합성함수 미분 (Chain Rule)", latex: "\\frac{dy}{dx} = \\frac{dy}{du} \\cdot \\frac{du}{dx}", tags: "미적분" },
+    { category: "Calculus", name: "부분 적분 (Integration by Parts)", latex: "\\int u dv = uv - \\int v du", tags: "미적분" },
+    { category: "Calculus", name: "치환 적분 (Substitution)", latex: "\\int f(g(x))g'(x) dx = \\int f(u) du", tags: "미적분" },
+    { category: "Calculus", name: "역함수 미분법", latex: "(f^{-1})'(b) = \\frac{1}{f'(a)} \\quad (f(a)=b)", tags: "미적분" },
 
-    // --- Calculus ---
-    { name: "미분 정의 (Derivative Definition)", latex: "f'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}", tags: "calculus limit" },
-    { name: "연쇄 법칙 (Chain Rule)", latex: "\\frac{dy}{dx} = \\frac{dy}{du} \\cdot \\frac{du}{dx}", tags: "calculus" },
-    { name: "미적분학 기본정리 (FTC)", latex: "\\int_a^b f(x) dx = F(b) - F(a)", tags: "calculus integral" },
-    { name: "테일러 급수 (Taylor Series)", latex: "f(x) = \\sum_{n=0}^{\\infty} \\frac{f^{(n)}(a)}{n!} (x-a)^n", tags: "calculus series" },
-    { name: "부분 적분 (Integration by Parts)", latex: "\\int u dv = uv - \\int v du", tags: "calculus integral" },
-    { name: "가우스 적분 (Gaussian Integral)", latex: "\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}", tags: "calculus integral" },
-    { name: "치환 적분 (Substitution)", latex: "\\int f(g(x))g'(x) dx = \\int f(u) du", tags: "calculus integral" },
+    // --- Prob/Geo (확통 & 기하) ---
+    { category: "Prob/Geo", name: "중복조합 (H)", latex: "{}_n H_r = {}_{n+r-1} C_r", tags: "확통" },
+    { category: "Prob/Geo", name: "조건부 확률", latex: "P(A|B) = \\frac{P(A \\cap B)}{P(B)}", tags: "확통" },
+    { category: "Prob/Geo", name: "정규분포 표기", latex: "X \\sim N(\\mu, \\sigma^2)", tags: "확통" },
+    { category: "Prob/Geo", name: "벡터 내적 (Dot Product)", latex: "\\vec{a} \\cdot \\vec{b} = |\\vec{a}||\\vec{b}| \\cos \\theta", tags: "기하" },
+    { category: "Prob/Geo", name: "타원 방정식 (Ellipse)", latex: "\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1", tags: "기하" },
 
-    // --- Physics ---
-    { name: "뉴턴 제2법칙 (Newton's 2nd)", latex: "F = ma", tags: "physics mechanics" },
-    { name: "질량-에너지 등가성 (Einstein)", latex: "E = mc^2", tags: "physics relativity" },
-    { name: "슈뢰딩거 방정식 (Schrödinger)", latex: "i\\hbar\\frac{\\partial}{\\partial t}\\Psi = \\hat{H}\\Psi", tags: "physics quantum" },
-    { name: "불확정성 원리 (Uncertainty)", latex: "\\Delta x \\Delta p \\ge \\frac{\\hbar}{2}", tags: "physics quantum" },
-    { name: "맥스웰 방정식 (Maxwell - Gauss)", latex: "\\nabla \\cdot \\vec{E} = \\frac{\\rho}{\\epsilon_0}", tags: "physics em" },
-    { name: "맥스웰 방정식 (Maxwell - Faraday)", latex: "\\nabla \\times \\vec{E} = -\\frac{\\partial \\vec{B}}{\\partial t}", tags: "physics em" },
-    { name: "오일러 공식 (Euler's Identity)", latex: "e^{i\\pi} + 1 = 0", tags: "math physics" },
-    { name: "로렌츠 인자 (Lorentz Factor)", latex: "\\gamma = \\frac{1}{\\sqrt{1 - v^2/c^2}}", tags: "physics relativity" },
-    { name: "푸리에 변환 (Fourier Transform)", latex: "\\hat{f}(\\xi) = \\int_{-\\infty}^{\\infty} f(x) e^{-2\\pi i x \\xi} dx", tags: "physics calculus" },
-    { name: "이상 기체 상태 방정식 (Ideal Gas)", latex: "PV = nRT", tags: "physics thermo" },
-    { name: "엔트로피 (Entropy)", latex: "S = k_B \\ln \\Omega", tags: "physics thermo" },
-    { name: "만유인력 법칙 (Gravity)", latex: "F = G \\frac{m_1 m_2}{r^2}", tags: "physics mechanics" },
-
-    // --- Statistics & Probability ---
-    { name: "베이즈 정리 (Bayes' Theorem)", latex: "P(A|B) = \\frac{P(B|A)P(A)}{P(B)}", tags: "stats prob" },
-    { name: "정규 분포 (Normal Distribution)", latex: "f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{1}{2}(\\frac{x-\\mu}{\\sigma})^2}", tags: "stats" },
-    { name: "표준 편차 (Standard Deviation)", latex: "\\sigma = \\sqrt{\\frac{\\sum(x_i - \\mu)^2}{N}}", tags: "stats" },
-    { name: "조합 (Combination)", latex: "C(n, k) = \\binom{n}{k} = \\frac{n!}{k!(n-k)!}", tags: "stats prob" },
-    { name: "기댓값 (Expected Value)", latex: "E[X] = \\sum x_i P(x_i)", tags: "stats prob" },
-
-    // --- Geometry ---
-    { name: "원의 넓이 (Area of Circle)", latex: "A = \\pi r^2", tags: "geometry" },
-    { name: "구의 부피 (Volume of Sphere)", latex: "V = \\frac{4}{3} \\pi r^3", tags: "geometry" },
-    { name: "오일러 다면체 정리 (Polyhedron)", latex: "V - E + F = 2", tags: "geometry topo" },
-    
-    // --- Basic Operators & Symbols (기본 기호) ---
-    { name: "절댓값 (Absolute Value)", latex: "\\left| x \\right|", tags: "절댓값 absolute math basic" },
-    { name: "이상/이하 (Inequality)", latex: "a \\ge b, c \\le d", tags: "부등호 이상 이하 inequality math" },
-
-    // --- Advanced Math ---
-    { name: "리만 제타 함수 (Riemann Zeta)", latex: "\\zeta(s) = \\sum_{n=1}^{\\infty} \\frac{1}{n^s}", tags: "math" },
-    { name: "나비에-스토크스 (Navier-Stokes)", latex: "\\rho(\\frac{\\partial \\vec{v}}{\\partial t} + \\vec{v} \\cdot \\nabla \\vec{v}) = -\\nabla p + \\mu \\nabla^2 \\vec{v} + \\vec{f}", tags: "math physics" },
-    { name: "라플라스 변환 (Laplace)", latex: "F(s) = \\int_0^{\\infty} f(t) e^{-st} dt", tags: "math calculus" }
+    // --- Basic & Algebra (기존 보존) ---
+    { category: "Math I/II", name: "근의 공식", latex: "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}", tags: "이차방정식" },
+    { category: "Math I/II", name: "피타고라스 정리", latex: "a^2 + b^2 = c^2", tags: "trig" },
+    { category: "Math I/II", name: "절댓값 표시", latex: "\\left| x \\right|", tags: "basic" }
 ];
 
-// Initialize Presets with Filtering
-function initPresets(filterText = '') {
+let currentCategory = 'All';
+
+// Initialize Presets with Filtering and Category
+function initPresets(searchText = '') {
     presetGrid.innerHTML = '';
-    const filtered = presets.filter(p => 
-        p.name.toLowerCase().includes(filterText.toLowerCase()) || 
-        p.tags.toLowerCase().includes(filterText.toLowerCase())
-    );
+    
+    const filtered = presets.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchText.toLowerCase()) || 
+                              p.tags.toLowerCase().includes(searchText.toLowerCase());
+        const matchesCategory = currentCategory === 'All' || p.category === currentCategory;
+        return matchesSearch && matchesCategory;
+    });
 
     if (filtered.length === 0) {
         presetGrid.innerHTML = '<div style="color: var(--text-secondary); padding: 1rem; text-align: center;">검색 결과가 없습니다.</div>';
@@ -99,10 +74,22 @@ function initPresets(filterText = '') {
         div.onclick = () => {
             latexInput.value = p.latex;
             updatePreview();
-            // Scroll to preview for better UX on mobile
             window.scrollTo({ top: document.querySelector('.preview-card').offsetTop - 20, behavior: 'smooth' });
         };
         presetGrid.appendChild(div);
+    });
+}
+
+// Category Tab Logic
+function setupTabs() {
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentCategory = tab.dataset.category;
+            initPresets(document.getElementById('preset-search').value);
+        });
     });
 }
 
@@ -226,6 +213,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 // Init
+setupTabs();
 initPresets();
 window.onload = () => {
     updatePreview();

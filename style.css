@@ -257,12 +257,39 @@ textarea:focus {
 
 .search-container {
     margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
 }
 
-.search-container h3 {
-    font-family: var(--font-heading);
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
+.tabs-container {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.tabs-container::-webkit-scrollbar {
+    height: 4px;
+}
+
+.tab-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: var(--accent-gradient);
+    border-color: transparent;
+    color: white;
+    font-weight: 600;
 }
 
 .search-box {
