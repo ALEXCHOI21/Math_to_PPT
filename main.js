@@ -24,9 +24,9 @@ const presets = [
     { category: "CSAT", name: "[260428] g(x) 정의", latex: "g(x) = \\begin{cases} -f(x) & (x < t) \\\\ f(x) & (x \\ge t) \\end{cases}", tags: "킬러" },
     { category: "CSAT", name: "[260428] 조건 (가) 수식", latex: "\\lim_{x \\to a^+} \\frac{g(x)}{x(x-2)}", tags: "킬러" },
     { category: "CSAT", name: "[260428] 조건 (나) 수식 1", latex: "\\lim_{x \\to m^+} \\frac{g(x)}{x(x-2)} < 0", tags: "킬러" },
-    { category: "CSAT", name: "[260428] 조건 (나) 수식 2", latex: "m \\in \\{g(-1), -\\frac{7}{2}g(1)\\}", tags: "킬러" },
+    { category: "CSAT", name: "[260428] 조건 (나) 수식 2", latex: "\\left\\{ g(-1), -\\frac{7}{2}g(1) \\right\\}", tags: "킬러" },
     { category: "CSAT", name: "[260428] 구하는 값", latex: "g(-5)", tags: "킬러" },
-    { category: "CSAT", name: "[260428] 단서 조건", latex: "g(-1) \\neq -\\frac{7}{2}g(1)", tags: "킬러" },
+    { category: "CSAT", name: "[260428] 단서 조건", latex: "\\left( g(-1) \\neq -\\frac{7}{2}g(1) \\right)", tags: "킬러" },
 
     // --- Math I/II (공통 과목 핵심) ---
     { category: "Math I/II", name: "지수 법칙", latex: "a^m \\cdot a^n = a^{m+n}, \\quad (a^m)^n = a^{mn}", tags: "수학I algebra" },
