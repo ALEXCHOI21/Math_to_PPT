@@ -21,10 +21,12 @@ const presets = [
     { category: "CSAT", name: "[수능] 삼각함수의 합성", latex: "a\\sin \\theta + b\\cos \\theta = \\sqrt{a^2+b^2}\\sin(\\theta+\\alpha)", tags: "수능 심화 미적분" },
     { category: "CSAT", name: "[수능] 2026 미적분 30번 킬러", latex: "g(a) \\cdot \\left( \\lim_{m \\to a^+} g(m) \\right) + g(b) \\cdot \\left( \\frac{\\ln b}{b} \\right)^2", tags: "수능 킬러" },
     { category: "CSAT", name: "[수능] 합성함수의 미분", latex: "(f \\circ g)'(x) = f'(g(x))g'(x)", tags: "수능 미적분" },
-    { category: "CSAT", name: "[260428 킬러] 함수 g(x) 정의", latex: "g(x) = \\begin{cases} -f(x) & (x < t) \\\\ f(x) & (x \\ge t) \\end{cases}", tags: "수능 킬러 삼차함수" },
-    { category: "CSAT", name: "[260428 킬러] 조건 (가)", latex: "\\text{(가) 모든 실수 } a \\text{에 대하여 } \\lim_{x \\to a^+} \\frac{g(x)}{x(x-2)} \\text{의 값이 존재한다.}", tags: "수능 킬러 극한" },
-    { category: "CSAT", name: "[260428 킬러] 조건 (나)", latex: "\\text{(나) } \\lim_{x \\to m^+} \\frac{g(x)}{x(x-2)} < 0 \\text{을 만족하는 자연수 } m \\text{의 집합은 } \\{g(-1), -\\frac{7}{2}g(1)\\} \\text{이다.}", tags: "수능 킬러 극한" },
-    { category: "CSAT", name: "[260428 킬러] 최종 문항", latex: "g(-5) \\text{의 값을 구하시오. (단, } g(-1) \\neq -\\frac{7}{2}g(1) \\text{) [4점]}", tags: "수능 킬러 삼차함수" },
+    { category: "CSAT", name: "[260428] g(x) 정의", latex: "g(x) = \\begin{cases} -f(x) & (x < t) \\\\ f(x) & (x \\ge t) \\end{cases}", tags: "킬러" },
+    { category: "CSAT", name: "[260428] 조건 (가) 수식", latex: "\\lim_{x \\to a^+} \\frac{g(x)}{x(x-2)}", tags: "킬러" },
+    { category: "CSAT", name: "[260428] 조건 (나) 수식 1", latex: "\\lim_{x \\to m^+} \\frac{g(x)}{x(x-2)} < 0", tags: "킬러" },
+    { category: "CSAT", name: "[260428] 조건 (나) 수식 2", latex: "m \\in \\{g(-1), -\\frac{7}{2}g(1)\\}", tags: "킬러" },
+    { category: "CSAT", name: "[260428] 구하는 값", latex: "g(-5)", tags: "킬러" },
+    { category: "CSAT", name: "[260428] 단서 조건", latex: "g(-1) \\neq -\\frac{7}{2}g(1)", tags: "킬러" },
 
     // --- Math I/II (공통 과목 핵심) ---
     { category: "Math I/II", name: "지수 법칙", latex: "a^m \\cdot a^n = a^{m+n}, \\quad (a^m)^n = a^{mn}", tags: "수학I algebra" },
