@@ -31,7 +31,6 @@ const presets = [
     // --- 260506 New Request ---
     { category: "CSAT", name: "[260506] f(x) 정의", latex: "f(x) = x^2 + 6x + 12", tags: "수능 킬러" },
     { category: "CSAT", name: "[260506] 조건 극한식", latex: "\\lim_{x \\to a} \\frac{x^2}{(f(x))^2 - k(x+2)f(x)}", tags: "수능 킬러" },
-
     // --- Math I/II (공통 과목 핵심) ---
     { category: "Math I/II", name: "지수 법칙", latex: "a^m \\cdot a^n = a^{m+n}, \\quad (a^m)^n = a^{mn}", tags: "수학I algebra" },
     { category: "Math I/II", name: "로그 정의", latex: "y = \\log_a x \\iff x = a^y", tags: "수학I log" },
