@@ -31,6 +31,15 @@ const presets = [
     // --- 260506 New Request ---
     { category: "CSAT", name: "[260506] f(x) 정의", latex: "f(x) = x^2 + 6x + 12", tags: "수능 킬러" },
     { category: "CSAT", name: "[260506] 조건 극한식", latex: "\\lim_{x \\to a} \\frac{x^2}{(f(x))^2 - k(x+2)f(x)}", tags: "수능 킬러" },
+
+    // --- 260509 New Request ---
+    { category: "CSAT", name: "[260509] 미정계수의 결정 기본", latex: "\\lim_{x \\to a} \\frac{f(x)}{g(x)} = L", tags: "수능 필수 극한" },
+    { category: "CSAT", name: "[260509] 미정계수 성질 ①", latex: "\\lim_{x \\to a} g(x) = 0 \\implies \\lim_{x \\to a} f(x) = 0", tags: "수능 필수 극한" },
+    { category: "CSAT", name: "[260509] 미정계수 성질 ②", latex: "L \\neq 0, \\, \\lim_{x \\to a} f(x) = 0 \\implies \\lim_{x \\to a} g(x) = 0", tags: "수능 필수 극한" },
+    { category: "CSAT", name: "[260509] 미정계수 예제 (루트)", latex: "\\lim_{x \\to 1} \\frac{\\sqrt{x+3}-k}{x-1} = \\frac{1}{4}", tags: "수능 필수 극한" },
+    { category: "CSAT", name: "[260509] 극한값의 존재 조건", latex: "\\lim_{x \\to a} f(x) = L \\iff \\lim_{x \\to a+} f(x) = \\lim_{x \\to a-} f(x) = L", tags: "수능 필수 극한" },
+    { category: "CSAT", name: "[260509] 좌우극한 불일치 결론", latex: "\\therefore \\lim_{x \\to 1+} f(x) \\neq \\lim_{x \\to 1-} f(x)", tags: "수능 필수 극한" },
+
     // --- Math I/II (공통 과목 핵심) ---
     { category: "Math I/II", name: "지수 법칙", latex: "a^m \\cdot a^n = a^{m+n}, \\quad (a^m)^n = a^{mn}", tags: "수학I algebra" },
     { category: "Math I/II", name: "로그 정의", latex: "y = \\log_a x \\iff x = a^y", tags: "수학I log" },
