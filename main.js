@@ -1,4 +1,7 @@
-// KaTeX Settings & Core Logic
+// ============================================================
+// Antigravity Math Engine v1.7.0
+// KaTeX 폰트 완전 임베딩 버전 - PPT 서체 불일치 완전 해결
+// ============================================================
 const latexInput = document.getElementById('latex-input');
 const output = document.getElementById('output');
 const clearBtn = document.getElementById('clear-btn');
@@ -10,7 +13,68 @@ const helpBtn = document.getElementById('help-btn');
 const helpModal = document.getElementById('help-modal');
 const closeModal = document.querySelector('.close-modal');
 
-// Comprehensive Presets Database (80+ Formulas) - v1.5.4 Final Clean
+// ── 폰트 CSS 전역 캐시 ──────────────────────────────────────
+let _katexFontEmbedCSS = null;
+
+/**
+ * KaTeX CDN에서 CSS를 가져와 모든 폰트 URL을 base64 Data URL로 교체합니다.
+ * 앱 시작 시 한 번만 실행되며 결과는 캐시됩니다.
+ */
+async function buildKaTeXFontCSS() {
+    if (_katexFontEmbedCSS) return _katexFontEmbedCSS;
+
+    try {
+        const KATEX_VERSION = '0.16.9';
+        const BASE_URL = `https://cdn.jsdelivr.net/npm/katex@${KATEX_VERSION}/dist`;
+        const cssUrl = `${BASE_URL}/katex.min.css`;
+
+        // 1. KaTeX CSS 텍스트 가져오기
+        const cssResp = await fetch(cssUrl);
+        let cssText = await cssResp.text();
+
+        // 2. CSS 내 상대 경로 폰트 URL 추출 (fonts/KaTeX_*.woff2 형식)
+        const urlPattern = /url\(fonts\/([^)'"]+)\)/g;
+        const uniqueFonts = new Set();
+        let m;
+        while ((m = urlPattern.exec(cssText)) !== null) {
+            uniqueFonts.add(m[1]);
+        }
+
+        // 3. 각 폰트를 fetch → base64 변환
+        const fontMap = {};
+        await Promise.all([...uniqueFonts].map(async (fontFile) => {
+            try {
+                const fontUrl = `${BASE_URL}/fonts/${fontFile}`;
+                const fontResp = await fetch(fontUrl);
+                const buffer = await fontResp.arrayBuffer();
+                const bytes = new Uint8Array(buffer);
+                let binary = '';
+                bytes.forEach(b => binary += String.fromCharCode(b));
+                const base64 = btoa(binary);
+                const mime = fontFile.endsWith('.woff2') ? 'font/woff2'
+                           : fontFile.endsWith('.woff')  ? 'font/woff'
+                           : 'font/truetype';
+                fontMap[fontFile] = `data:${mime};base64,${base64}`;
+            } catch (e) {
+                console.warn(`폰트 로드 실패: ${fontFile}`, e);
+            }
+        }));
+
+        // 4. CSS 내 상대 경로를 Data URL로 교체
+        _katexFontEmbedCSS = cssText.replace(/url\(fonts\/([^)'"]+)\)/g, (_, fontFile) => {
+            return fontMap[fontFile] ? `url(${fontMap[fontFile]})` : `url(fonts/${fontFile})`;
+        });
+
+        console.log(`✅ KaTeX 폰트 임베딩 완료 (${Object.keys(fontMap).length}개 폰트)`);
+        return _katexFontEmbedCSS;
+
+    } catch (err) {
+        console.error('KaTeX 폰트 CSS 빌드 실패:', err);
+        return '';
+    }
+}
+
+// ── 수식 프리셋 데이터베이스 ─────────────────────────────────
 const presets = [
     // --- CSAT Specialized (2026 수능 대비 전문) ---
     { category: "CSAT", name: "[수능] 사인법칙 활용", latex: "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = 2R", tags: "수능 필수 사인법칙" },
@@ -27,12 +91,8 @@ const presets = [
     { category: "CSAT", name: "[260428] 조건 (나) 수식 2", latex: "\\left\\{ g(-1), \\, -\\frac{7}{2}g(1) \\right\\}", tags: "킬러" },
     { category: "CSAT", name: "[260428] 구하는 값", latex: "g(-5)", tags: "킬러" },
     { category: "CSAT", name: "[260428] 단서 조건", latex: "\\left( g(-1) \\neq -\\frac{7}{2}g(1) \\right)", tags: "킬러" },
-
-    // --- 260506 New Request ---
     { category: "CSAT", name: "[260506] f(x) 정의", latex: "f(x) = x^2 + 6x + 12", tags: "수능 킬러" },
     { category: "CSAT", name: "[260506] 조건 극한식", latex: "\\lim_{x \\to a} \\frac{x^2}{(f(x))^2 - k(x+2)f(x)}", tags: "수능 킬러" },
-
-    // --- 260509 New Request ---
     { category: "CSAT", name: "[260509] 미정계수의 결정 기본", latex: "\\lim_{x \\to a} \\frac{f(x)}{g(x)} = L", tags: "수능 필수 극한" },
     { category: "CSAT", name: "[260509] 미정계수 성질 ①", latex: "\\lim_{x \\to a} g(x) = 0 \\implies \\lim_{x \\to a} f(x) = 0", tags: "수능 필수 극한" },
     { category: "CSAT", name: "[260509] 미정계수 성질 ②", latex: "L \\neq 0, \\, \\lim_{x \\to a} f(x) = 0 \\implies \\lim_{x \\to a} g(x) = 0", tags: "수능 필수 극한" },
@@ -50,6 +110,8 @@ const presets = [
     { category: "Math I/II", name: "근의 공식", latex: "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}", tags: "algebra 기초" },
     { category: "Math I/II", name: "피타고라스 정리", latex: "a^2 + b^2 = c^2", tags: "geometry" },
     { category: "Math I/II", name: "이항 정리", latex: "(a+b)^n = \\sum_{k=0}^n \\binom{n}{k} a^{n-k} b^k", tags: "algebra" },
+    { category: "Math I/II", name: "절댓값 표시", latex: "\\left| x \\right|", tags: "basic" },
+    { category: "Math I/II", name: "부등호 (이상/이하)", latex: "\\ge, \\le", tags: "basic" },
 
     // --- Calculus (미적분 심화) ---
     { category: "Calculus", name: "몫의 미분법", latex: "\\left(\\frac{f}{g}\\right)' = \\frac{f'g - fg'}{g^2}", tags: "calculus" },
@@ -79,15 +141,11 @@ const presets = [
     { category: "Science", name: "나비에-스토크스", latex: "\\rho(\\frac{\\partial \\vec{v}}{\\partial t} + \\vec{v} \\cdot \\nabla \\vec{v}) = -\\nabla p + \\mu \\nabla^2 \\vec{v} + \\vec{f}", tags: "engineering math" },
     { category: "Science", name: "리만 제타 함수", latex: "\\zeta(s) = \\sum_{n=1}^{\\infty} \\frac{1}{n^s}", tags: "math" },
     { category: "Science", name: "오일러 항등식", latex: "e^{i\\pi} + 1 = 0", tags: "math physics" },
-
-    // --- Basic & Others ---
-    { category: "Math I/II", name: "절댓값 표시", latex: "\\left| x \\right|", tags: "basic" },
-    { category: "Math I/II", name: "부등호 (이상/이하)", latex: "\\ge, \\le", tags: "basic" }
 ];
 
 let currentCategory = 'All';
 
-// Initialize Presets with Filtering and Category
+// ── 라이브러리 프리셋 초기화 ─────────────────────────────────
 function initPresets(searchText = '') {
     presetGrid.innerHTML = '';
     
@@ -107,7 +165,6 @@ function initPresets(searchText = '') {
         const div = document.createElement('div');
         div.className = 'preset-item';
         
-        // Render math inside the preset item
         const mathContainer = document.createElement('div');
         mathContainer.className = 'preset-math';
         
@@ -117,16 +174,18 @@ function initPresets(searchText = '') {
         const renderMath = () => {
             if (window.katex) {
                 try {
+                    // 라이브러리도 displayMode: true로 통일 → 동일한 KaTeX Serif 서체 사용
                     katex.render(p.latex, mathContainer, {
                         throwOnError: false,
-                        displayMode: true
+                        displayMode: true,
+                        trust: true,
+                        strict: false
                     });
                 } catch (e) {
                     console.error('KaTeX Library Render Error:', e);
                     mathContainer.textContent = p.latex;
                 }
             } else {
-                // KaTeX가 아직 로드되지 않은 경우 잠시 후 재시도
                 setTimeout(renderMath, 100);
             }
         };
@@ -141,7 +200,7 @@ function initPresets(searchText = '') {
     });
 }
 
-// Category Tab Logic
+// ── 카테고리 탭 ───────────────────────────────────────────────
 function setupTabs() {
     const tabs = document.querySelectorAll('.tab-btn');
     tabs.forEach(tab => {
@@ -154,7 +213,7 @@ function setupTabs() {
     });
 }
 
-// Update Preview using KaTeX
+// ── 실시간 프리뷰 업데이트 ───────────────────────────────────
 function updatePreview() {
     const val = latexInput.value.trim();
     if (!val) {
@@ -175,79 +234,105 @@ function updatePreview() {
     }
 }
 
-// Copy to Clipboard (PNG) using html2canvas
+// ── 캡처 공통 옵션 생성 ──────────────────────────────────────
+async function buildCaptureOptions(withBackground = false) {
+    // 캐시된 KaTeX 폰트 CSS 가져오기 (최초 1회만 fetch)
+    const fontEmbedCSS = await buildKaTeXFontCSS();
+    
+    return {
+        pixelRatio: 4,  // 고해상도 (PPT 선명도 확보)
+        backgroundColor: withBackground ? '#ffffff' : null,
+        fontEmbedCSS: fontEmbedCSS,  // ★ KaTeX 폰트 완전 임베딩
+        style: {
+            padding: '20px 24px',
+        },
+        // 외부 리소스 접근 허용
+        fetchRequestInit: { mode: 'cors' },
+        // 모든 pseudo-element 포함
+        includeQueryParams: true,
+    };
+}
+
+// ── 클립보드 PNG 복사 ─────────────────────────────────────────
 async function copyToClipboard() {
     try {
         const katexElement = output.querySelector('.katex-display');
-        if (!katexElement) return;
+        if (!katexElement) {
+            alert('먼저 수식을 입력해 주세요.');
+            return;
+        }
 
-        // 폰트 로드 완료 대기 및 안정화 시간 확보
-        await document.fonts.ready;
-        
-        // html-to-image 옵션 강화
-        const options = {
-            pixelRatio: 3,
-            backgroundColor: null,
-            style: {
-                padding: '12px',
-                opacity: '1'
-            }
-        };
+        // 버튼 상태: 로딩 중
+        const originalHTML = copyBtn.innerHTML;
+        copyBtn.innerHTML = '⏳ 처리 중...';
+        copyBtn.disabled = true;
 
-        // 폰트 유실 방지를 위해 명시적으로 모든 스타일과 폰트를 포함하도록 유도
-        // (html-to-image는 기본적으로 페이지의 CSS를 읽어오지만, 명시적 대기가 필요함)
+        // 폰트 로드 완료 대기
         await document.fonts.ready;
 
+        const options = await buildCaptureOptions(false);
         const blob = await htmlToImage.toBlob(katexElement, options);
 
         if (blob) {
             const data = [new ClipboardItem({ 'image/png': blob })];
             await navigator.clipboard.write(data);
             
-            const originalText = copyBtn.innerHTML;
-            copyBtn.innerHTML = '복사 완료!';
+            copyBtn.innerHTML = '✅ 복사 완료!';
             copyBtn.style.background = 'var(--success-color)';
             setTimeout(() => {
-                copyBtn.innerHTML = originalText;
-                copyBtn.style.background = 'var(--accent-gradient)';
+                copyBtn.innerHTML = originalHTML;
+                copyBtn.style.background = '';
+                copyBtn.disabled = false;
             }, 2000);
         }
 
     } catch (err) {
-        console.error('Error in copyToClipboard:', err);
-        alert('클립보드 복사에 실패했습니다. 브라우저 설정을 확인해주세요.');
+        console.error('copyToClipboard 오류:', err);
+        copyBtn.innerHTML = copyBtn.dataset.origHtml || '클립보드 복사 (PNG)';
+        copyBtn.disabled = false;
+        alert('클립보드 복사에 실패했습니다.\n브라우저 권한 설정을 확인해주세요.');
     }
 }
 
+// ── PNG 다운로드 ──────────────────────────────────────────────
 async function downloadImage() {
-    const katexElement = output.querySelector('.katex-display');
-    if (!katexElement) return;
-
-    await document.fonts.ready;
-
-    const options = {
-        pixelRatio: 3,
-        backgroundColor: null,
-        style: {
-            padding: '12px'
+    try {
+        const katexElement = output.querySelector('.katex-display');
+        if (!katexElement) {
+            alert('먼저 수식을 입력해 주세요.');
+            return;
         }
-    };
 
-    await document.fonts.ready;
+        const originalHTML = downloadSvgBtn.innerHTML;
+        downloadSvgBtn.innerHTML = '⏳ 생성 중...';
+        downloadSvgBtn.disabled = true;
 
-    htmlToImage.toPng(katexElement, options).then(dataUrl => {
+        await document.fonts.ready;
+
+        const options = await buildCaptureOptions(false);
+        const dataUrl = await htmlToImage.toPng(katexElement, options);
+
         const link = document.createElement('a');
         link.href = dataUrl;
         link.download = `math-eq-${Date.now()}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    }).catch(err => {
-        console.error('Error in downloadImage:', err);
-    });
+
+        downloadSvgBtn.innerHTML = '✅ 다운로드 완료!';
+        setTimeout(() => {
+            downloadSvgBtn.innerHTML = originalHTML;
+            downloadSvgBtn.disabled = false;
+        }, 2000);
+
+    } catch (err) {
+        console.error('downloadImage 오류:', err);
+        downloadSvgBtn.disabled = false;
+        alert('이미지 생성에 실패했습니다.');
+    }
 }
 
-// Event Listeners
+// ── 이벤트 리스너 ────────────────────────────────────────────
 latexInput.addEventListener('input', updatePreview);
 searchInput.addEventListener('input', (e) => initPresets(e.target.value));
 clearBtn.addEventListener('click', () => {
@@ -255,7 +340,7 @@ clearBtn.addEventListener('click', () => {
     updatePreview();
 });
 copyBtn.addEventListener('click', copyToClipboard);
-downloadSvgBtn.addEventListener('click', downloadImage); 
+downloadSvgBtn.addEventListener('click', downloadImage);
 
 function toggleModal() {
     const isVisible = helpModal.style.display === 'block';
@@ -283,9 +368,14 @@ window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && helpModal.style.display === 'block') toggleModal();
 });
 
-// Init
+// ── 초기화 ───────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
     initPresets();
     updatePreview();
+
+    // 백그라운드에서 KaTeX 폰트 사전 로드 (첫 복사 시 지연 없애기)
+    buildKaTeXFontCSS().then(() => {
+        console.log('🎨 KaTeX 폰트 사전 로드 완료 - PNG 복사 준비됨');
+    });
 });

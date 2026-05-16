@@ -240,25 +240,25 @@ textarea:focus {
     background: rgba(255, 255, 255, 0.03);
     border: 1px dashed var(--border-color);
     border-radius: 12px;
-    /* display: flex; 제거 - KaTeX 자체 정렬 및 폰트 베이스라인 유지 */
-    text-align: center;
-    padding: 3rem 2rem;
-    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
     overflow: auto;
     position: relative;
     background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
     background-size: 20px 20px;
 }
 
-/* KaTeX Specific Tweaks */
+/* KaTeX 렌더링 순정 - 프리븷 크기만 조정, 나머지는 KaTeX 엔진 자체 처리 */
 .katex-display {
-    padding: 15px 0;
     margin: 0.5em 0 !important;
+    padding: 0 !important;
 }
 
 .katex {
+    /* font-size만 설정 - 폰트/서체/line-height는 KaTeX에 위임 */
     font-size: 3rem !important;
-    /* line-height 제거 - 절댓값 기호 등 수직 불균형 방지 */
 }
 
 .search-container {
@@ -410,24 +410,23 @@ textarea:focus {
 }
 
 .preset-math {
-    font-size: 1rem;
-    color: var(--text-primary); /* 프리뷰와 동일한 색상으로 복구 */
+    /* KaTeX 순정 렌더링 - font-family 강제 제거 */
+    color: var(--text-primary);
     padding: 0.25rem 0;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
-    /* font-family 제거 - KaTeX 내부 폰트 사용 보장 */
 }
 
 .preset-math::-webkit-scrollbar {
     display: none;
 }
 
+/* 라이브러리 항목 displayMode 수식 정렬 */
 .preset-math .katex {
-    font-size: 1.2em !important;
+    font-size: 1.0em !important;
 }
 
-/* 라이브러리 항목 내 displayMode 수식 정렬 조정 */
 .preset-math .katex-display {
     margin: 0 !important;
     padding: 0 !important;
