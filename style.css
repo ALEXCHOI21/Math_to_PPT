@@ -251,8 +251,14 @@ textarea:focus {
 }
 
 /* KaTeX Specific Tweaks */
+.katex-display {
+    padding: 15px 0;
+    margin: 0.5em 0 !important;
+}
+
 .katex {
     font-size: 3rem !important; /* Increase preview size */
+    line-height: 1.2;
 }
 
 .search-container {

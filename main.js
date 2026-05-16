@@ -156,11 +156,22 @@ async function copyToClipboard() {
         const katexElement = output.querySelector('.katex-display');
         if (!katexElement) return;
 
+        // 폰트 로드 대기 및 안정화 시간 부여
+        await document.fonts.ready;
+        await new Promise(resolve => setTimeout(resolve, 150));
+
         const canvas = await html2canvas(katexElement, {
             backgroundColor: null,
             scale: 4,
             logging: false,
-            useCORS: true
+            useCORS: true,
+            onclone: (clonedDoc) => {
+                const element = clonedDoc.querySelector('.katex-display');
+                if (element) {
+                    element.style.padding = '5px'; // 절댓값 기호 잘림 방지용 여백
+                    element.style.opacity = '1';
+                }
+            }
         });
 
         canvas.toBlob(async (blob) => {
@@ -177,6 +188,7 @@ async function copyToClipboard() {
                 }, 2000);
             } catch (err) {
                 console.error('Clipboard write failed:', err);
+                alert('클립보드 복사에 실패했습니다.');
             }
         }, 'image/png');
 
@@ -185,14 +197,25 @@ async function copyToClipboard() {
     }
 }
 
-function downloadImage() {
+async function downloadImage() {
     const katexElement = output.querySelector('.katex-display');
     if (!katexElement) return;
+
+    // 폰트 로드 대기
+    await document.fonts.ready;
+    await new Promise(resolve => setTimeout(resolve, 150));
 
     html2canvas(katexElement, {
         backgroundColor: null,
         scale: 5,
-        logging: false
+        logging: false,
+        useCORS: true,
+        onclone: (clonedDoc) => {
+            const element = clonedDoc.querySelector('.katex-display');
+            if (element) {
+                element.style.padding = '5px';
+            }
+        }
     }).then(canvas => {
         const url = canvas.toDataURL('image/png');
         const link = document.createElement('a');
