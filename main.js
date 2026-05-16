@@ -1,6 +1,6 @@
 // ============================================================
-// Antigravity Math Engine v1.7.0
-// KaTeX 폰트 완전 임베딩 버전 - PPT 서체 불일치 완전 해결
+// Antigravity Math Engine v1.7.1
+// KaTeX 폰트 HEAD 인라인 주입 방식 - PPT 서체 불일치 완전 해결
 // ============================================================
 const latexInput = document.getElementById('latex-input');
 const output = document.getElementById('output');
@@ -13,64 +13,67 @@ const helpBtn = document.getElementById('help-btn');
 const helpModal = document.getElementById('help-modal');
 const closeModal = document.querySelector('.close-modal');
 
-// ── 폰트 CSS 전역 캐시 ──────────────────────────────────────
-let _katexFontEmbedCSS = null;
+// ── 폰트 주입 상태 플래그 ────────────────────────────────────
+let _fontsInjected = false;
 
 /**
- * KaTeX CDN에서 CSS를 가져와 모든 폰트 URL을 base64 Data URL로 교체합니다.
- * 앱 시작 시 한 번만 실행되며 결과는 캐시됩니다.
+ * KaTeX 폰트를 base64로 변환하여 <head>에 <style> 태그로 직접 주입합니다.
+ * html-to-image가 DOM 클론 시 인라인 스타일을 자동으로 포함하므로
+ * PNG에 폰트가 완전히 임베딩됩니다.
  */
-async function buildKaTeXFontCSS() {
-    if (_katexFontEmbedCSS) return _katexFontEmbedCSS;
+async function injectKaTeXFonts() {
+    if (_fontsInjected) return;
+    if (document.getElementById('katex-font-embed')) { _fontsInjected = true; return; }
 
     try {
-        const KATEX_VERSION = '0.16.9';
-        const BASE_URL = `https://cdn.jsdelivr.net/npm/katex@${KATEX_VERSION}/dist`;
-        const cssUrl = `${BASE_URL}/katex.min.css`;
+        const BASE = 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist';
 
-        // 1. KaTeX CSS 텍스트 가져오기
-        const cssResp = await fetch(cssUrl);
-        let cssText = await cssResp.text();
+        // 1. KaTeX CSS 가져오기
+        let cssText = await fetch(`${BASE}/katex.min.css`).then(r => r.text());
 
-        // 2. CSS 내 상대 경로 폰트 URL 추출 (fonts/KaTeX_*.woff2 형식)
-        const urlPattern = /url\(fonts\/([^)'"]+)\)/g;
-        const uniqueFonts = new Set();
-        let m;
-        while ((m = urlPattern.exec(cssText)) !== null) {
-            uniqueFonts.add(m[1]);
-        }
+        // 2. 모든 폰트 파일명 추출 (따옴표 포함/미포함 모두 처리)
+        const fontSet = new Set();
+        cssText.replace(/url\(['"]?fonts\/([^'"\)]+)['"]?\)/g, (_, f) => fontSet.add(f));
 
-        // 3. 각 폰트를 fetch → base64 변환
+        // 3. 폰트 파일 → base64 병렬 변환
         const fontMap = {};
-        await Promise.all([...uniqueFonts].map(async (fontFile) => {
+        await Promise.all([...fontSet].map(async (file) => {
             try {
-                const fontUrl = `${BASE_URL}/fonts/${fontFile}`;
-                const fontResp = await fetch(fontUrl);
-                const buffer = await fontResp.arrayBuffer();
-                const bytes = new Uint8Array(buffer);
+                const buf = await fetch(`${BASE}/fonts/${file}`).then(r => r.arrayBuffer());
+                // Uint8Array → base64 (대용량 안전 방식)
+                const bytes = new Uint8Array(buf);
+                const chunkSize = 8192;
                 let binary = '';
-                bytes.forEach(b => binary += String.fromCharCode(b));
-                const base64 = btoa(binary);
-                const mime = fontFile.endsWith('.woff2') ? 'font/woff2'
-                           : fontFile.endsWith('.woff')  ? 'font/woff'
+                for (let i = 0; i < bytes.length; i += chunkSize) {
+                    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+                }
+                const mime = file.endsWith('.woff2') ? 'font/woff2'
+                           : file.endsWith('.woff')  ? 'font/woff'
                            : 'font/truetype';
-                fontMap[fontFile] = `data:${mime};base64,${base64}`;
+                fontMap[file] = `data:${mime};base64,${btoa(binary)}`;
             } catch (e) {
-                console.warn(`폰트 로드 실패: ${fontFile}`, e);
+                console.warn('폰트 로드 실패:', file, e);
             }
         }));
 
-        // 4. CSS 내 상대 경로를 Data URL로 교체
-        _katexFontEmbedCSS = cssText.replace(/url\(fonts\/([^)'"]+)\)/g, (_, fontFile) => {
-            return fontMap[fontFile] ? `url(${fontMap[fontFile]})` : `url(fonts/${fontFile})`;
-        });
+        // 4. CSS 내 상대경로를 Data URL로 치환
+        const embeddedCSS = cssText.replace(
+            /url\(['"]?fonts\/([^'"\)]+)['"]?\)/g,
+            (_, file) => fontMap[file] ? `url('${fontMap[file]}')` : `url('fonts/${file}')`
+        );
 
-        console.log(`✅ KaTeX 폰트 임베딩 완료 (${Object.keys(fontMap).length}개 폰트)`);
-        return _katexFontEmbedCSS;
+        // 5. ★ 핵심: <head>에 인라인 <style>로 직접 주입
+        //    html-to-image는 DOM 클론 시 인라인 스타일을 자동 포함 → PNG에 폰트 완전 임베딩
+        const styleTag = document.createElement('style');
+        styleTag.id = 'katex-font-embed';
+        styleTag.textContent = embeddedCSS;
+        document.head.appendChild(styleTag);
+
+        _fontsInjected = true;
+        console.log(`✅ KaTeX 폰트 ${Object.keys(fontMap).length}개 HEAD 주입 완료 → PNG 복사 준비됨`);
 
     } catch (err) {
-        console.error('KaTeX 폰트 CSS 빌드 실패:', err);
-        return '';
+        console.error('KaTeX 폰트 주입 실패:', err);
     }
 }
 
@@ -234,49 +237,34 @@ function updatePreview() {
     }
 }
 
-// ── 캡처 공통 옵션 생성 ──────────────────────────────────────
-async function buildCaptureOptions(withBackground = false) {
-    // 캐시된 KaTeX 폰트 CSS 가져오기 (최초 1회만 fetch)
-    const fontEmbedCSS = await buildKaTeXFontCSS();
-    
+// ── 캡처 옵션 (폰트는 HEAD 주입으로 처리) ────────────────────
+function getCaptureOptions(withBackground = false) {
     return {
-        pixelRatio: 4,  // 고해상도 (PPT 선명도 확보)
+        pixelRatio: 4,
         backgroundColor: withBackground ? '#ffffff' : null,
-        fontEmbedCSS: fontEmbedCSS,  // ★ KaTeX 폰트 완전 임베딩
-        style: {
-            padding: '20px 24px',
-        },
-        // 외부 리소스 접근 허용
-        fetchRequestInit: { mode: 'cors' },
-        // 모든 pseudo-element 포함
-        includeQueryParams: true,
+        style: { padding: '20px 24px' },
+        // 외부 리소스를 직접 fetch하지 않음 (이미 HEAD에 인라인으로 있음)
+        skipFonts: false,
     };
 }
 
 // ── 클립보드 PNG 복사 ─────────────────────────────────────────
 async function copyToClipboard() {
+    const originalHTML = copyBtn.innerHTML;
     try {
         const katexElement = output.querySelector('.katex-display');
-        if (!katexElement) {
-            alert('먼저 수식을 입력해 주세요.');
-            return;
-        }
+        if (!katexElement) { alert('먼저 수식을 입력해 주세요.'); return; }
 
-        // 버튼 상태: 로딩 중
-        const originalHTML = copyBtn.innerHTML;
         copyBtn.innerHTML = '⏳ 처리 중...';
         copyBtn.disabled = true;
 
-        // 폰트 로드 완료 대기
+        // 폰트가 HEAD에 주입됐는지 확인 (최초 1회)
+        await injectKaTeXFonts();
         await document.fonts.ready;
 
-        const options = await buildCaptureOptions(false);
-        const blob = await htmlToImage.toBlob(katexElement, options);
-
+        const blob = await htmlToImage.toBlob(katexElement, getCaptureOptions(false));
         if (blob) {
-            const data = [new ClipboardItem({ 'image/png': blob })];
-            await navigator.clipboard.write(data);
-            
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
             copyBtn.innerHTML = '✅ 복사 완료!';
             copyBtn.style.background = 'var(--success-color)';
             setTimeout(() => {
@@ -285,33 +273,28 @@ async function copyToClipboard() {
                 copyBtn.disabled = false;
             }, 2000);
         }
-
     } catch (err) {
         console.error('copyToClipboard 오류:', err);
-        copyBtn.innerHTML = copyBtn.dataset.origHtml || '클립보드 복사 (PNG)';
+        copyBtn.innerHTML = originalHTML;
         copyBtn.disabled = false;
-        alert('클립보드 복사에 실패했습니다.\n브라우저 권한 설정을 확인해주세요.');
+        alert('클립보드 복사 실패\n' + err.message);
     }
 }
 
 // ── PNG 다운로드 ──────────────────────────────────────────────
 async function downloadImage() {
+    const originalHTML = downloadSvgBtn.innerHTML;
     try {
         const katexElement = output.querySelector('.katex-display');
-        if (!katexElement) {
-            alert('먼저 수식을 입력해 주세요.');
-            return;
-        }
+        if (!katexElement) { alert('먼저 수식을 입력해 주세요.'); return; }
 
-        const originalHTML = downloadSvgBtn.innerHTML;
         downloadSvgBtn.innerHTML = '⏳ 생성 중...';
         downloadSvgBtn.disabled = true;
 
+        await injectKaTeXFonts();
         await document.fonts.ready;
 
-        const options = await buildCaptureOptions(false);
-        const dataUrl = await htmlToImage.toPng(katexElement, options);
-
+        const dataUrl = await htmlToImage.toPng(katexElement, getCaptureOptions(false));
         const link = document.createElement('a');
         link.href = dataUrl;
         link.download = `math-eq-${Date.now()}.png`;
@@ -320,15 +303,13 @@ async function downloadImage() {
         document.body.removeChild(link);
 
         downloadSvgBtn.innerHTML = '✅ 다운로드 완료!';
-        setTimeout(() => {
-            downloadSvgBtn.innerHTML = originalHTML;
-            downloadSvgBtn.disabled = false;
-        }, 2000);
+        setTimeout(() => { downloadSvgBtn.innerHTML = originalHTML; downloadSvgBtn.disabled = false; }, 2000);
 
     } catch (err) {
         console.error('downloadImage 오류:', err);
+        downloadSvgBtn.innerHTML = originalHTML;
         downloadSvgBtn.disabled = false;
-        alert('이미지 생성에 실패했습니다.');
+        alert('이미지 생성 실패: ' + err.message);
     }
 }
 
@@ -374,8 +355,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initPresets();
     updatePreview();
 
-    // 백그라운드에서 KaTeX 폰트 사전 로드 (첫 복사 시 지연 없애기)
-    buildKaTeXFontCSS().then(() => {
-        console.log('🎨 KaTeX 폰트 사전 로드 완료 - PNG 복사 준비됨');
-    });
+    // 백그라운드에서 KaTeX 폰트를 HEAD에 미리 주입 (첫 복사 시 지연 제거)
+    injectKaTeXFonts();
 });
