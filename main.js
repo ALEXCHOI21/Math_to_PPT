@@ -106,7 +106,32 @@ function initPresets(searchText = '') {
     filtered.forEach(p => {
         const div = document.createElement('div');
         div.className = 'preset-item';
-        div.innerHTML = `<div>${p.name}</div><code>${p.latex}</code>`;
+        
+        // Render math inside the preset item
+        const mathContainer = document.createElement('div');
+        mathContainer.className = 'preset-math';
+        
+        div.innerHTML = `<div>${p.name}</div>`;
+        div.appendChild(mathContainer);
+        
+        const renderMath = () => {
+            if (window.katex) {
+                try {
+                    katex.render(p.latex, mathContainer, {
+                        throwOnError: false,
+                        displayMode: false
+                    });
+                } catch (e) {
+                    console.error('KaTeX Library Render Error:', e);
+                    mathContainer.textContent = p.latex;
+                }
+            } else {
+                // KaTeX가 아직 로드되지 않은 경우 잠시 후 재시도
+                setTimeout(renderMath, 100);
+            }
+        };
+        renderMath();
+
         div.onclick = () => {
             latexInput.value = p.latex;
             updatePreview();
@@ -156,18 +181,26 @@ async function copyToClipboard() {
         const katexElement = output.querySelector('.katex-display');
         if (!katexElement) return;
 
-        // 폰트 로드 완료 대기
+        // 폰트 로드 완료 대기 및 안정화 시간 확보
         await document.fonts.ready;
-
-        // html-to-image를 사용하여 고해상도 Blob 생성
-        const blob = await htmlToImage.toBlob(katexElement, {
+        
+        // html-to-image 옵션 강화
+        const options = {
             pixelRatio: 4,
             backgroundColor: null,
             style: {
-                padding: '10px', // 여백 확보로 기호 잘림 방지
-                opacity: '1'
+                padding: '16px',
+                opacity: '1',
+                transform: 'scale(1)',
+                transformOrigin: 'center'
             }
-        });
+        };
+
+        // 폰트 유실 방지를 위해 명시적으로 모든 스타일과 폰트를 포함하도록 유도
+        // (html-to-image는 기본적으로 페이지의 CSS를 읽어오지만, 명시적 대기가 필요함)
+        await document.fonts.ready;
+
+        const blob = await htmlToImage.toBlob(katexElement, options);
 
         if (blob) {
             const data = [new ClipboardItem({ 'image/png': blob })];
@@ -194,13 +227,18 @@ async function downloadImage() {
 
     await document.fonts.ready;
 
-    htmlToImage.toPng(katexElement, {
+    const options = {
         pixelRatio: 5,
         backgroundColor: null,
         style: {
-            padding: '10px'
+            padding: '16px',
+            transform: 'scale(1)'
         }
-    }).then(dataUrl => {
+    };
+
+    await document.fonts.ready;
+
+    htmlToImage.toPng(katexElement, options).then(dataUrl => {
         const link = document.createElement('a');
         link.href = dataUrl;
         link.download = `math-eq-${Date.now()}.png`;
@@ -249,6 +287,8 @@ window.addEventListener('keydown', (e) => {
 });
 
 // Init
-setupTabs();
-initPresets();
-window.onload = updatePreview;
+document.addEventListener('DOMContentLoaded', () => {
+    setupTabs();
+    initPresets();
+    updatePreview();
+});

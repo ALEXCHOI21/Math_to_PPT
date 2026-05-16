@@ -384,24 +384,52 @@ textarea:focus {
 
 .preset-item {
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 1.25rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
 }
 
 .preset-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
     border-color: var(--accent-color);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
-.preset-item code {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-    display: block;
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* \ -> ₩ 변환 문제 방지 */
+.preset-item div:first-child {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+.preset-math {
+    font-size: 1.1rem;
+    color: var(--accent-hover); /* 가독성 위해 약간 더 밝게 */
+    padding: 0.5rem 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    font-family: 'KaTeX_Main', 'Times New Roman', serif; /* KaTeX 로딩 전 fallback */
+}
+
+.preset-math::-webkit-scrollbar {
+    display: none;
+}
+
+.preset-math .katex {
+    font-size: 1.3em !important; /* 라이브러리 내 수식 크기 소폭 확대 */
+}
+
+/* 절댓값 기호(|) 가독성 보강 */
+.katex .mord.vlist > span {
+    font-weight: 500;
 }
 
 /* Modal Styling */
