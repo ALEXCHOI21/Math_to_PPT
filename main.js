@@ -119,7 +119,7 @@ function initPresets(searchText = '') {
                 try {
                     katex.render(p.latex, mathContainer, {
                         throwOnError: false,
-                        displayMode: false
+                        displayMode: true
                     });
                 } catch (e) {
                     console.error('KaTeX Library Render Error:', e);
@@ -186,13 +186,11 @@ async function copyToClipboard() {
         
         // html-to-image 옵션 강화
         const options = {
-            pixelRatio: 4,
+            pixelRatio: 3,
             backgroundColor: null,
             style: {
-                padding: '16px',
-                opacity: '1',
-                transform: 'scale(1)',
-                transformOrigin: 'center'
+                padding: '12px',
+                opacity: '1'
             }
         };
 
@@ -228,11 +226,10 @@ async function downloadImage() {
     await document.fonts.ready;
 
     const options = {
-        pixelRatio: 5,
+        pixelRatio: 3,
         backgroundColor: null,
         style: {
-            padding: '16px',
-            transform: 'scale(1)'
+            padding: '12px'
         }
     };
 

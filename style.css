@@ -240,10 +240,10 @@ textarea:focus {
     background: rgba(255, 255, 255, 0.03);
     border: 1px dashed var(--border-color);
     border-radius: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
+    /* display: flex; 제거 - KaTeX 자체 정렬 및 폰트 베이스라인 유지 */
+    text-align: center;
+    padding: 3rem 2rem;
+    overflow: auto;
     overflow: auto;
     position: relative;
     background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
@@ -257,8 +257,8 @@ textarea:focus {
 }
 
 .katex {
-    font-size: 3rem !important; /* Increase preview size */
-    line-height: 1.2;
+    font-size: 3rem !important;
+    /* line-height 제거 - 절댓값 기호 등 수직 불균형 방지 */
 }
 
 .search-container {
@@ -410,13 +410,13 @@ textarea:focus {
 }
 
 .preset-math {
-    font-size: 1.1rem;
-    color: var(--accent-hover); /* 가독성 위해 약간 더 밝게 */
-    padding: 0.5rem 0;
+    font-size: 1rem;
+    color: var(--text-primary); /* 프리뷰와 동일한 색상으로 복구 */
+    padding: 0.25rem 0;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
-    font-family: 'KaTeX_Main', 'Times New Roman', serif; /* KaTeX 로딩 전 fallback */
+    /* font-family 제거 - KaTeX 내부 폰트 사용 보장 */
 }
 
 .preset-math::-webkit-scrollbar {
@@ -424,12 +424,13 @@ textarea:focus {
 }
 
 .preset-math .katex {
-    font-size: 1.3em !important; /* 라이브러리 내 수식 크기 소폭 확대 */
+    font-size: 1.2em !important;
 }
 
-/* 절댓값 기호(|) 가독성 보강 */
-.katex .mord.vlist > span {
-    font-weight: 500;
+/* 라이브러리 항목 내 displayMode 수식 정렬 조정 */
+.preset-math .katex-display {
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Modal Styling */
