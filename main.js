@@ -238,11 +238,25 @@ function updatePreview() {
 }
 
 // ── 캡처 옵션 (폰트는 HEAD 주입으로 처리) ────────────────────
-function getCaptureOptions(withBackground = false) {
+function getCaptureOptions(element, withBackground = false) {
+    // KaTeX 수식 특성상 엘리먼트 경계 밖으로 약간 렌더링될 수 있으므로 넉넉한 여백(40px) 추가
+    const extraSpace = 40; 
+    const width = element.offsetWidth + extraSpace;
+    const height = element.offsetHeight + extraSpace;
+
     return {
         pixelRatio: 4,
         backgroundColor: withBackground ? '#ffffff' : null,
-        style: { padding: '20px 24px' },
+        width: width,
+        height: height,
+        style: { 
+            padding: `${extraSpace/2}px`,
+            margin: '0',
+            boxSizing: 'border-box',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
         // 외부 리소스를 직접 fetch하지 않음 (이미 HEAD에 인라인으로 있음)
         skipFonts: false,
     };
@@ -262,7 +276,7 @@ async function copyToClipboard() {
         await injectKaTeXFonts();
         await document.fonts.ready;
 
-        const blob = await htmlToImage.toBlob(katexElement, getCaptureOptions(false));
+        const blob = await htmlToImage.toBlob(katexElement, getCaptureOptions(katexElement, false));
         if (blob) {
             await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
             copyBtn.innerHTML = '✅ 복사 완료!';
@@ -294,7 +308,7 @@ async function downloadImage() {
         await injectKaTeXFonts();
         await document.fonts.ready;
 
-        const dataUrl = await htmlToImage.toPng(katexElement, getCaptureOptions(false));
+        const dataUrl = await htmlToImage.toPng(katexElement, getCaptureOptions(katexElement, false));
         const link = document.createElement('a');
         link.href = dataUrl;
         link.download = `math-eq-${Date.now()}.png`;
