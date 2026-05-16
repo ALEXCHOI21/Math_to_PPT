@@ -156,44 +156,35 @@ async function copyToClipboard() {
         const katexElement = output.querySelector('.katex-display');
         if (!katexElement) return;
 
-        // 폰트 로드 대기 및 안정화 시간 부여
+        // 폰트 로드 완료 대기
         await document.fonts.ready;
-        await new Promise(resolve => setTimeout(resolve, 150));
 
-        const canvas = await html2canvas(katexElement, {
+        // html-to-image를 사용하여 고해상도 Blob 생성
+        const blob = await htmlToImage.toBlob(katexElement, {
+            pixelRatio: 4,
             backgroundColor: null,
-            scale: 4,
-            logging: false,
-            useCORS: true,
-            onclone: (clonedDoc) => {
-                const element = clonedDoc.querySelector('.katex-display');
-                if (element) {
-                    element.style.padding = '5px'; // 절댓값 기호 잘림 방지용 여백
-                    element.style.opacity = '1';
-                }
+            style: {
+                padding: '10px', // 여백 확보로 기호 잘림 방지
+                opacity: '1'
             }
         });
 
-        canvas.toBlob(async (blob) => {
-            try {
-                const data = [new ClipboardItem({ 'image/png': blob })];
-                await navigator.clipboard.write(data);
-                
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '복사 완료!';
-                copyBtn.style.background = 'var(--success-color)';
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.style.background = 'var(--accent-gradient)';
-                }, 2000);
-            } catch (err) {
-                console.error('Clipboard write failed:', err);
-                alert('클립보드 복사에 실패했습니다.');
-            }
-        }, 'image/png');
+        if (blob) {
+            const data = [new ClipboardItem({ 'image/png': blob })];
+            await navigator.clipboard.write(data);
+            
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = '복사 완료!';
+            copyBtn.style.background = 'var(--success-color)';
+            setTimeout(() => {
+                copyBtn.innerHTML = originalText;
+                copyBtn.style.background = 'var(--accent-gradient)';
+            }, 2000);
+        }
 
     } catch (err) {
         console.error('Error in copyToClipboard:', err);
+        alert('클립보드 복사에 실패했습니다. 브라우저 설정을 확인해주세요.');
     }
 }
 
@@ -201,29 +192,23 @@ async function downloadImage() {
     const katexElement = output.querySelector('.katex-display');
     if (!katexElement) return;
 
-    // 폰트 로드 대기
     await document.fonts.ready;
-    await new Promise(resolve => setTimeout(resolve, 150));
 
-    html2canvas(katexElement, {
+    htmlToImage.toPng(katexElement, {
+        pixelRatio: 5,
         backgroundColor: null,
-        scale: 5,
-        logging: false,
-        useCORS: true,
-        onclone: (clonedDoc) => {
-            const element = clonedDoc.querySelector('.katex-display');
-            if (element) {
-                element.style.padding = '5px';
-            }
+        style: {
+            padding: '10px'
         }
-    }).then(canvas => {
-        const url = canvas.toDataURL('image/png');
+    }).then(dataUrl => {
         const link = document.createElement('a');
-        link.href = url;
+        link.href = dataUrl;
         link.download = `math-eq-${Date.now()}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }).catch(err => {
+        console.error('Error in downloadImage:', err);
     });
 }
 
